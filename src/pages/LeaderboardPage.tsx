@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { mockLeaderboard } from "@/data/gameData";
 import { useGameStore } from "@/store/gameStore";
-import { Trophy, Medal, Award } from "lucide-react";
 
 const podiumEmoji = ["🥇", "🥈", "🥉"];
 

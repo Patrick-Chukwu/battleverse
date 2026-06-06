@@ -11,7 +11,7 @@ const answerLabels = ["A", "B", "C", "D"];
 const QuizPage = () => {
   const { subjectId } = useParams<{ subjectId: string }>();
   const navigate = useNavigate();
-  const { addXp, addCoins, incrementStreak, resetStreak, completeQuiz, earnBadge } = useGameStore();
+  const { addXp, addCoins, completeQuiz, earnBadge } = useGameStore();
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);

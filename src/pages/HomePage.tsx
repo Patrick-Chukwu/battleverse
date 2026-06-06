@@ -4,7 +4,7 @@ import { FloatingIcons } from "@/components/FloatingIcons";
 import { subjects } from "@/data/quizData";
 import { useGameStore } from "@/store/gameStore";
 import { getLevel } from "@/data/gameData";
-import { Swords, BookOpen, Trophy, Zap, ArrowRight } from "lucide-react";
+import { Swords, BookOpen, ArrowRight } from "lucide-react";
 
 const HomePage = () => {
   const navigate = useNavigate();
