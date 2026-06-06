@@ -16,7 +16,7 @@ const HomePage = () => {
       {/* Hero */}
       <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
         <FloatingIcons />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-background" />
+        <div className="absolute inset-0 bg-linear-to-b from-primary/5 via-transparent to-background" />
         
         <div className="relative z-10 text-center px-4 max-w-3xl mx-auto">
           <motion.div
@@ -144,7 +144,7 @@ const HomePage = () => {
           initial={{ scale: 0.9, opacity: 0 }}
           whileInView={{ scale: 1, opacity: 1 }}
           viewport={{ once: true }}
-          className="bg-gradient-to-r from-primary to-game-purple rounded-3xl p-12 text-primary-foreground"
+          className="bg-linear-to-r from-primary to-game-purple rounded-3xl p-12 text-primary-foreground"
         >
           <h2 className="text-3xl sm:text-4xl font-black mb-3">Level Up Your Brain 🧠</h2>
           <p className="text-lg opacity-90 font-semibold mb-6">Battle. Learn. Win. — Future Tech Starts Here</p>
