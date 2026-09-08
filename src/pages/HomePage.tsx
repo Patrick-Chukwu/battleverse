@@ -121,7 +121,7 @@ const HomePage = () => {
           <p className="text-lg font-bold text-muted-foreground">Pick a subject and start your quest</p>
         </motion.div>
 
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {subjects.map((subject, i) => (
             <motion.button
               key={subject.id}

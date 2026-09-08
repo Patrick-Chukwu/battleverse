@@ -15,8 +15,8 @@ const SubjectsPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-16">
-      <div className="container mx-auto max-w-5xl px-4">
+    <div className="min-h-screen bg-background px-4 pt-24 pb-16">
+      <div className="mx-auto w-full max-w-[864px]">
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-12 text-center">
           <h1 className="mb-2 text-4xl font-black tracking-tight">
             Choose Your Subject 📚
