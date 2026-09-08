@@ -1,11 +1,18 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useGameStore } from "@/store/gameStore";
 import { getLevel } from "@/data/gameData";
 import { Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ProfileEditDialog } from "@/components/ProfileEditDialog";
+import { useSession } from "@/hooks/useSession";
+import { isSupabaseConfigured } from "@/lib/flags";
 
 const ProfilePage = () => {
   const { profile } = useGameStore();
+  const { data: session } = useSession();
+  const [editOpen, setEditOpen] = useState(false);
   const levelInfo = getLevel(profile.xp);
   const nextLevelXp = levelInfo.nextLevelXp;
   const progress = levelInfo.progress;
@@ -43,8 +50,11 @@ const ProfilePage = () => {
             <div className="relative mb-6 inline-block">
               <span className="block text-8xl">{profile.avatar}</span>
               <motion.button
+                type="button"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
+                onClick={() => setEditOpen(true)}
+                aria-label="Edit profile"
                 className="absolute right-0 bottom-0 rounded-xl border border-border bg-card p-2 text-muted-foreground shadow-lg transition-colors hover:text-primary"
               >
                 <Pencil className="h-5 w-5" />
@@ -54,9 +64,20 @@ const ProfilePage = () => {
             <h1 className="mb-1 flex items-center justify-center gap-2 text-2xl font-black sm:text-4xl">
               {profile.name}
             </h1>
-            <p className="mb-8 text-xl font-bold text-muted-foreground">
+            <p className="mb-2 text-xl font-bold text-muted-foreground">
               Level {levelInfo.level} • {levelInfo.title}
             </p>
+            {isSupabaseConfigured() && !session ? (
+              <p className="mb-8 text-sm font-bold text-muted-foreground">
+                Playing as guest.{" "}
+                <Link to="/login" className="text-primary underline">
+                  Sign in
+                </Link>{" "}
+                to sync this profile.
+              </p>
+            ) : (
+              <div className="mb-8" />
+            )}
 
             <div className="mx-auto max-w-md">
               <div className="mb-3 flex justify-between text-sm font-black">
@@ -122,6 +143,7 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+      <ProfileEditDialog open={editOpen} onOpenChange={setEditOpen} />
     </div>
   );
 };
