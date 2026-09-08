@@ -57,7 +57,7 @@ const LoginPage = () => {
       toast.error(error.message);
       return;
     }
-    toast.success("Check your email for a 6-digit code.");
+    toast.success("Check your email for a 6-digit code (not the localhost link).");
     setStep("otp");
   };
 
@@ -196,7 +196,8 @@ const LoginPage = () => {
         {tab === "email" && step === "otp" && (
           <div className="space-y-4">
             <p className="text-sm font-bold text-muted-foreground">
-              Code sent to {email}
+              Enter the 6-digit code emailed to {email}. If you only got a
+              localhost link, change the Magic Link template — see docs/PHASE1.md.
             </p>
             <div className="flex justify-center">
               <InputOTP maxLength={6} value={otp} onChange={setOtp}>

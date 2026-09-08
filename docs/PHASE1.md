@@ -23,7 +23,28 @@ This Cloud Agent cannot log into your Supabase project (the Supabase MCP you add
      (later add `https://thebattleverse.vercel.app/**` for production)
 10. Optional but helpful for local testing: **Authentication** → **Providers** → Email → turn **Confirm email** off if codes/links are delayed. Keep it on for production.
 
-The app expects a **6-digit email OTP**. The default Supabase email includes a code and/or a magic link. Type the code on `/login`. If you only get a link, you can click it (the app also reads the session from the URL).
+### Email should be a typed code, not a localhost link
+
+Supabase’s default “Magic Link” email only contains `{{ .ConfirmationURL }}`. That URL is `http://localhost:5173/...`, so it works on the laptop and fails on your phone.
+
+The app already accepts a **6-digit code**. Change the email template:
+
+1. Dashboard → **Authentication** → **Email Templates** (sometimes under **Authentication** → **Emails**).
+2. Open **Magic Link**.
+3. Replace the body with the contents of `supabase/email-templates/magic-link.html`, or paste:
+
+```html
+<h2>Your Battleverse sign-in code</h2>
+<p>Enter this code in the app. Do not share it.</p>
+<p style="font-size: 32px; font-weight: 800; letter-spacing: 6px;">{{ .Token }}</p>
+<p>The code expires in about an hour.</p>
+```
+
+4. **Save**.
+5. Also edit **Confirm signup** the same way if that template still has a link (first-time accounts sometimes use it).
+6. Request a new code on `/login`. The new email should show digits like `847291`. Type them on the laptop (or on your phone if you open the deployed site).
+
+You can still add `https://thebattleverse.vercel.app` as a redirect later if you want a tappable link on phones. You do not need that for OTP.
 
 ## B. Create `.env.local` (URL + anon key)
 
