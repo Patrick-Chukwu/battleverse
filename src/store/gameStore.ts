@@ -7,6 +7,7 @@ interface GameState {
   profile: PlayerProfile;
   setName: (name: string) => void;
   setAvatar: (avatar: string) => void;
+  hydrateFromServer: (patch: Partial<PlayerProfile>) => void;
   addXp: (amount: number) => void;
   addCoins: (amount: number) => void;
   incrementStreak: () => void;
@@ -32,6 +33,8 @@ export const useGameStore = create<GameState>()(
       },
       setName: (name) => set((s) => ({ profile: { ...s.profile, name } })),
       setAvatar: (avatar) => set((s) => ({ profile: { ...s.profile, avatar } })),
+      hydrateFromServer: (patch) =>
+        set((s) => ({ profile: { ...s.profile, ...patch } })),
       addXp: (amount) => set((s) => {
         const newXp = s.profile.xp + amount;
         return { profile: { ...s.profile, xp: newXp, level: getLevel(newXp).level } };

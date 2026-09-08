@@ -1,11 +1,17 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useGameStore } from "@/store/gameStore";
 import { Home, Trophy, User, Zap } from "lucide-react";
 import { NavLink } from "./NavLink";
+import { useSession } from "@/hooks/useSession";
+import { signOut } from "@/hooks/useProfile";
+import { isSupabaseConfigured } from "@/lib/flags";
 
 export function Navbar() {
   const { profile } = useGameStore();
+  const { data: session } = useSession();
+  const navigate = useNavigate();
+  const showAuth = isSupabaseConfigured();
 
   const links = [
     { to: "/", icon: Home, label: "Home" },
@@ -57,6 +63,25 @@ export function Navbar() {
               {profile.name}
             </span>
           </Link>
+          {showAuth && !session && (
+            <Link
+              to="/login"
+              className="hidden rounded-xl px-3 py-1.5 text-sm font-black text-primary sm:inline"
+            >
+              Sign in
+            </Link>
+          )}
+          {showAuth && session && (
+            <button
+              type="button"
+              onClick={() => {
+                void signOut().then(() => navigate("/"));
+              }}
+              className="hidden rounded-xl px-2 py-1.5 text-xs font-bold text-muted-foreground hover:text-foreground sm:inline"
+            >
+              Sign out
+            </button>
+          )}
         </div>
       </div>
     </nav>
