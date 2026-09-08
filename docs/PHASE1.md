@@ -7,15 +7,17 @@ This Cloud Agent cannot log into your Supabase project (the Supabase MCP you add
 1. Open [https://supabase.com/dashboard](https://supabase.com/dashboard) and click the **Battleverse** project.
 2. Left sidebar: **SQL Editor** → **New query**.
 3. Open this repo file: `supabase/migrations/0001_init.sql`. Select all, copy, paste into the editor.
-4. Click **Run**. Wait until you see success (green).  
-   If something already exists from a previous attempt, tell the assistant — do not re-run blindly.
-5. **New query** again. Open `supabase/seed.sql`, copy all, paste, **Run**.
-6. Confirm seed worked: left sidebar **Table Editor** → `subjects` should have 4 rows; `questions` should have 30 rows; `badges` should have 8.
+4. Click **Run**. Wait until you see success (green).
+5. If you see `ERROR: 42710: type "age_band" already exists`, the schema was already applied (or a previous run got partway). Do this:
+   - **Option A (clean redo):** New query → paste `supabase/reset.sql` → Run → then run `0001_init.sql` again → then seed.
+   - **Option B (already finished init):** Skip init. Go to **Table Editor**. If you see `profiles`, `subjects`, `questions`, jump to step 6 and only run `seed.sql`.
+6. **New query** again. Open `supabase/seed.sql`, copy all, paste, **Run**.
+7. Confirm seed worked: left sidebar **Table Editor** → `subjects` should have 4 rows; `questions` should have 30 rows; `badges` should have 8.
 
 ### Auth settings (needed for Sign in)
 
-7. Left sidebar: **Authentication** → **Providers** → **Email**. Leave Email enabled.
-8. **Authentication** → **URL Configuration**:
+8. Left sidebar: **Authentication** → **Providers** → **Email**. Leave Email enabled.
+9. **Authentication** → **URL Configuration**:
    - Site URL: `http://localhost:5173`
    - Redirect URLs: add `http://localhost:5173` and `http://localhost:5173/login`  
      (later add `https://thebattleverse.vercel.app/**` for production)
