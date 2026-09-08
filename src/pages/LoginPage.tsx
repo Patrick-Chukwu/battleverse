@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -36,36 +36,8 @@ const LoginPage = () => {
   const [avatar, setAvatar] = useState("🦊");
   const [ageBand, setAgeBand] = useState<AgeBand | null>(null);
   const [busy, setBusy] = useState(false);
-  const signedInOnce = useRef(false);
 
   const goGuest = () => navigate("/");
-
-  useEffect(() => {
-    const supabase = getSupabase();
-    if (!supabase) return;
-
-    const afterSignIn = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) return;
-      const profile = await fetchOwnProfile();
-      if (!profile) return;
-      if (isGeneratedUsername(profile.username)) {
-        setAvatar(profile.avatar);
-        setStep("username");
-        return;
-      }
-      if (signedInOnce.current) return;
-      signedInOnce.current = true;
-      toast.success("Signed in.");
-      navigate("/");
-    };
-
-    void afterSignIn();
-    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_IN") void afterSignIn();
-    });
-    return () => sub.subscription.unsubscribe();
-  }, [navigate]);
 
   const sendOtp = async () => {
     const supabase = getSupabase();
@@ -78,17 +50,14 @@ const LoginPage = () => {
     setBusy(true);
     const { error } = await supabase.auth.signInWithOtp({
       email: trimmed,
-      options: {
-        shouldCreateUser: true,
-        emailRedirectTo: `${window.location.origin}/login`,
-      },
+      options: { shouldCreateUser: true },
     });
     setBusy(false);
     if (error) {
       toast.error(error.message);
       return;
     }
-    toast.success("Check your email and open the sign-in link on this device.");
+    toast.success("Check your email for a 6-digit code.");
     setStep("otp");
   };
 
@@ -191,7 +160,7 @@ const LoginPage = () => {
 
         {tab === "phone" && (
           <div className="mb-6 rounded-2xl border border-border p-4 text-sm font-bold text-muted-foreground">
-            Phone login is stubbed for Phase 1. Use email sign-in for now — phone
+            Phone login is stubbed for Phase 1. Use email OTP for now — phone
             findability lands with challenges (Phase 4).
           </div>
         )}
@@ -219,7 +188,7 @@ const LoginPage = () => {
               onClick={() => void sendOtp()}
               className="flex h-14 w-full items-center justify-center rounded-2xl bg-primary text-lg font-black text-primary-foreground shadow-lg transition-transform hover:scale-[1.02] disabled:opacity-50"
             >
-              {busy ? "Sending…" : "Send sign-in email"}
+              {busy ? "Sending…" : "Send code"}
             </button>
           </div>
         )}
@@ -227,8 +196,7 @@ const LoginPage = () => {
         {tab === "email" && step === "otp" && (
           <div className="space-y-4">
             <p className="text-sm font-bold text-muted-foreground">
-              Open the email sent to {email} and tap the sign-in link (keep this
-              tab open). If the email has a 6-digit code instead, type it here.
+              Code sent to {email}
             </p>
             <div className="flex justify-center">
               <InputOTP maxLength={6} value={otp} onChange={setOtp}>

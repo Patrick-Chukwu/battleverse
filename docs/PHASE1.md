@@ -1,89 +1,51 @@
-# Phase 1 setup — run this on your machine
+# Phase 1 — Backend, auth, schema
 
-This Cloud Agent cannot log into your Supabase project (the Supabase MCP you added lives in desktop Cursor, not here). Do these three jobs locally. They take about 10 minutes.
+Practice, Battle bots, and the mock leaderboard still run from local data (`src/data/quizData.ts`). This phase adds **accounts** and a **Postgres schema** you can apply in Supabase.
 
-## A. Run the SQL (schema, then seed)
+## 1. Create a Supabase project
 
-1. Open [https://supabase.com/dashboard](https://supabase.com/dashboard) and click the **Battleverse** project.
-2. Left sidebar: **SQL Editor** → **New query**.
-3. Open this repo file: `supabase/migrations/0001_init.sql`. Select all, copy, paste into the editor.
-4. Click **Run**. Wait until you see success (green).
-5. If you see `ERROR: 42710: type "age_band" already exists`, the schema was already applied (or a previous run got partway). Do this:
-   - **Option A (clean redo):** New query → paste `supabase/reset.sql` → Run → then run `0001_init.sql` again → then seed.
-   - **Option B (already finished init):** Skip init. Go to **Table Editor**. If you see `profiles`, `subjects`, `questions`, jump to step 6 and only run `seed.sql`.
-6. **New query** again. Open `supabase/seed.sql`, copy all, paste, **Run**.
-7. Confirm seed worked: left sidebar **Table Editor** → `subjects` should have 4 rows; `questions` should have 30 rows; `badges` should have 8.
+1. Open [https://supabase.com/dashboard](https://supabase.com/dashboard) and create a project.
+2. Project Settings → API: copy **Project URL** and **anon public** key.
+3. Authentication → Providers: keep **Email** enabled. Turn on **Email OTP** (disable confirmations if you want codes without a confirm-link friction for local testing).
+4. Authentication → URL configuration: add `http://localhost:5173` and your Vercel URL to Redirect URLs.
 
-### Auth settings (needed for Sign in)
+## 2. Apply SQL
 
-8. Left sidebar: **Authentication** → **Providers** → **Email**. Leave Email enabled.
-9. **Authentication** → **URL Configuration**:
-   - Site URL: `http://localhost:5173`
-   - Redirect URLs: add `http://localhost:5173` and `http://localhost:5173/login`  
-     (later add `https://thebattleverse.vercel.app/**` for production)
-10. Optional but helpful for local testing: **Authentication** → **Providers** → Email → turn **Confirm email** off if codes/links are delayed. Keep it on for production.
+In the SQL editor, run in order:
 
-### Email (default magic link for now)
+1. [`supabase/migrations/0001_init.sql`](../supabase/migrations/0001_init.sql) — tables, RLS, `handle_new_user` trigger
+2. [`supabase/seed.sql`](../supabase/seed.sql) — 4 subjects, exam types, 8 badges, 30 published questions (same items as `quizData.ts`)
 
-Custom SMTP and a branded 6-digit OTP template are **paused** while bootstrapping. Use Supabase’s default Magic Link email.
+Regenerate the seed after editing questions:
 
-1. On `/login`, enter your email and send the sign-in mail.
-2. Open the email **on the same laptop** and tap the link. The app detects the session in the URL.
-3. If the email also has a 6-digit `{{ .Token }}` later, you can type it on the OTP screen instead.
+```bash
+node scripts/generate-seed.mjs
+```
 
-When you are ready to pay for SMTP / phone-friendly codes, change the Magic Link template to `{{ .Token }}` (see `supabase/email-templates/magic-link.html`) and add `https://thebattleverse.vercel.app/**` to Redirect URLs.
-
-## B. Create `.env.local` (URL + anon key)
-
-1. In the dashboard: **Project Settings** (gear) → **API**.
-2. Copy **Project URL** (looks like `https://abcdefgh.supabase.co`).
-3. Copy **anon public** key (long JWT starting with `eyJ...`).  
-   Do **not** copy the `service_role` key. Never put that in the frontend.
-4. In the repo root on your computer:
+## 3. Wire the frontend
 
 ```bash
 cp .env.example .env.local
-```
-
-5. Edit `.env.local` so it looks like this (your real values):
-
-```
-VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
-
-6. Save. `.env.local` is gitignored — do not commit it.
-7. Vercel (when you deploy this branch): Project → Settings → Environment Variables → add the same two `VITE_*` names.
-
-## C. Sign in and edit username on two browsers
-
-1. In the repo:
-
-```bash
-pnpm install
+# paste URL + anon key
 pnpm run dev
 ```
 
-2. Open the URL Vite prints (usually `http://localhost:5173`).
-3. Click **Sign in** (top right, desktop) or go to `/login`.
-4. Enter your email → **Send sign-in email**.
-5. Open the email on this laptop and tap the magic link (default Supabase mail). The app should sign you in. If the mail later has a 6-digit code, you can type that instead.
-6. If asked, pick a username (letters/numbers/underscore, 3–20 chars) and avatar → **Save and play**.
-7. Go to **Profile**. Click the pencil on the avatar. Change username or avatar → **Save**. You should see “Profile saved to your account.”
-8. **Second browser** (or Chrome Incognito):
-   - Open `http://localhost:5173/login`
-   - Sign in with the **same email** and a new code
-   - Profile should show the username/avatar you saved in step 7 — not “Player” / a blank guest
+Flags ([`src/lib/flags.ts`](../src/lib/flags.ts)):
 
-Guest path (no account): **Continue as guest** still plays Practice/Battle as before.
+| Flag | Effect |
+|------|--------|
+| `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` | Enables `/login` and Sign in |
+| `VITE_USE_SERVER_PROFILE` | Default **on** when Supabase is configured. Set to `false` to keep Zustand-only profiles |
 
-## If something fails
+Until Phase 2, quizzes still read `quizData.ts`. Seeded SQL questions are for admin/SQL inspection and the next phase.
 
-| Symptom | Fix |
-|---------|-----|
-| `/login` says auth is not configured | `.env.local` missing or Vite not restarted after saving it |
-| Send code errors | Email provider on; check Auth logs in the dashboard |
-| Verify fails | Use the latest code; codes expire quickly |
-| **Database error saving new user** (and no email) | Auth could not create a `profiles` row, so signup was rolled back and no mail was sent. Run `supabase/fix_signup_trigger.sql` in the SQL Editor, then try Sign in again. |
-| Profile does not sync on browser 2 | SQL `0001_init.sql` not applied (no `handle_new_user` trigger) |
-| `subjects` empty | You ran init but not `seed.sql` |
+## 4. Definition of done (manual)
+
+- Device A: Sign in with email OTP, pick a username/avatar on Profile pencil, refresh Device B signed in as the same user — same username/avatar.
+- In SQL, `select phone_hash, email_hash from profiles` as user B (or via the anon client selecting another id) returns no other user’s private columns. Other users only see [`public_profiles`](../supabase/migrations/0001_init.sql) (username, avatar, xp, level, age_band, discoverable).
+- Continue as guest: finish a local practice quiz as before.
+- Home, Subjects, Quiz, Battle (bots), Leaderboard mock are unchanged.
+
+## 5. Vercel
+
+Add the same `VITE_*` env vars on the project, then redeploy.

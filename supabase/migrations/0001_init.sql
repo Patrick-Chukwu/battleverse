@@ -4,6 +4,10 @@
 CREATE EXTENSION IF NOT EXISTS citext;
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
+-- ---------------------------------------------------------------------------
+-- Enums
+-- ---------------------------------------------------------------------------
+
 CREATE TYPE public.age_band AS ENUM ('6-8', '9-12', '13-16', '16plus');
 CREATE TYPE public.difficulty AS ENUM ('easy', 'medium', 'hard');
 CREATE TYPE public.question_status AS ENUM ('draft', 'published', 'archived');
@@ -13,6 +17,10 @@ CREATE TYPE public.battle_status AS ENUM ('waiting', 'active', 'complete', 'forf
 CREATE TYPE public.invite_status AS ENUM ('pending', 'accepted', 'declined', 'expired', 'queued_offline');
 CREATE TYPE public.xp_source AS ENUM ('practice', 'battle', 'badge');
 CREATE TYPE public.test_status AS ENUM ('draft', 'published', 'archived');
+
+-- ---------------------------------------------------------------------------
+-- Identity
+-- ---------------------------------------------------------------------------
 
 CREATE TABLE public.profiles (
   id uuid PRIMARY KEY REFERENCES auth.users (id) ON DELETE CASCADE,
@@ -55,6 +63,10 @@ CREATE TABLE public.topics (
   name text NOT NULL
 );
 
+-- ---------------------------------------------------------------------------
+-- Content
+-- ---------------------------------------------------------------------------
+
 CREATE TABLE public.questions (
   id text PRIMARY KEY,
   prompt text NOT NULL,
@@ -92,6 +104,10 @@ CREATE TABLE public.test_questions (
   position integer NOT NULL,
   PRIMARY KEY (test_id, question_id)
 );
+
+-- ---------------------------------------------------------------------------
+-- Play
+-- ---------------------------------------------------------------------------
 
 CREATE TABLE public.attempts (
   id uuid PRIMARY KEY,
@@ -164,6 +180,10 @@ CREATE TABLE public.matchmaking_queue (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
+-- ---------------------------------------------------------------------------
+-- Gamification
+-- ---------------------------------------------------------------------------
+
 CREATE TABLE public.xp_events (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   user_id uuid NOT NULL REFERENCES public.profiles (id) ON DELETE CASCADE,
@@ -203,6 +223,11 @@ CREATE TABLE public.admin_audit (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
+-- ---------------------------------------------------------------------------
+-- Public profile view (hides phone_hash, email_hash, parent_email)
+-- Runs as owner so other users can read safe columns without profiles SELECT.
+-- ---------------------------------------------------------------------------
+
 CREATE VIEW public.public_profiles
   WITH (security_invoker = false)
   AS
@@ -215,6 +240,10 @@ CREATE VIEW public.public_profiles
     age_band,
     discoverable
   FROM public.profiles;
+
+-- ---------------------------------------------------------------------------
+-- updated_at
+-- ---------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.set_updated_at()
 RETURNS trigger
@@ -238,11 +267,15 @@ CREATE TRIGGER tests_updated_at
   BEFORE UPDATE ON public.tests
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
+-- ---------------------------------------------------------------------------
+-- New auth user → profile
+-- ---------------------------------------------------------------------------
+
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public, extensions
+SET search_path = public
 AS $$
 DECLARE
   base text;
@@ -266,11 +299,10 @@ BEGIN
     uname,
     '🦊',
     CASE
-      WHEN NEW.email IS NOT NULL THEN encode(extensions.digest(lower(NEW.email)::bytea, 'sha256'), 'hex')
+      WHEN NEW.email IS NOT NULL THEN encode(digest(lower(NEW.email), 'sha256'), 'hex')
       ELSE NULL
     END
-  )
-  ON CONFLICT (id) DO NOTHING;
+  );
   RETURN NEW;
 END;
 $$;
@@ -278,6 +310,10 @@ $$;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- ---------------------------------------------------------------------------
+-- RLS
+-- ---------------------------------------------------------------------------
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.subjects ENABLE ROW LEVEL SECURITY;
@@ -299,6 +335,7 @@ ALTER TABLE public.user_badges ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.leaderboard_snapshots ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.admin_audit ENABLE ROW LEVEL SECURITY;
 
+-- profiles: only the owner can SELECT the full row (including phone_hash / email_hash).
 CREATE POLICY profiles_select_own ON public.profiles
   FOR SELECT TO authenticated
   USING (auth.uid() = id);
@@ -312,6 +349,7 @@ CREATE POLICY profiles_insert_own ON public.profiles
   FOR INSERT TO authenticated
   WITH CHECK (auth.uid() = id);
 
+-- Catalogs are public (anon guests + signed-in).
 CREATE POLICY exam_types_read ON public.exam_types
   FOR SELECT TO anon, authenticated USING (true);
 
@@ -338,6 +376,7 @@ CREATE POLICY badges_read ON public.badges
 CREATE POLICY leaderboard_read ON public.leaderboard_snapshots
   FOR SELECT TO anon, authenticated USING (true);
 
+-- Attempts / XP: own rows only.
 CREATE POLICY attempts_own ON public.attempts
   FOR ALL TO authenticated
   USING (auth.uid() = user_id)
@@ -355,6 +394,7 @@ CREATE POLICY user_badges_insert_own ON public.user_badges
   FOR INSERT TO authenticated
   WITH CHECK (auth.uid() = user_id);
 
+-- Battles: players in the room.
 CREATE POLICY battles_participant ON public.battles
   FOR SELECT TO authenticated
   USING (
@@ -414,5 +454,6 @@ CREATE POLICY admin_audit_admin ON public.admin_audit
 GRANT SELECT ON public.public_profiles TO anon, authenticated;
 GRANT SELECT ON public.subjects, public.exam_types, public.topics, public.badges TO anon, authenticated;
 
+-- Admin writes (Phase 5) use the service role / future policies. Players cannot update questions.
 REVOKE INSERT, UPDATE, DELETE ON public.questions FROM anon, authenticated;
 REVOKE INSERT, UPDATE, DELETE ON public.subjects FROM anon, authenticated;

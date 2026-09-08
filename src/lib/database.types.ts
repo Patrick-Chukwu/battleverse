@@ -27,3 +27,30 @@ export interface ProfileUpdate {
   age_band?: AgeBand | null;
   discoverable?: boolean;
 }
+
+export type Database = {
+  public: {
+    Tables: {
+      profiles: {
+        Row: ProfileRow;
+        Insert: Partial<ProfileRow> & { id: string; username: string };
+        Update: Partial<ProfileRow>;
+        Relationships: [];
+      };
+    };
+    Views: {
+      public_profiles: {
+        Row: Pick<
+          ProfileRow,
+          "id" | "username" | "avatar" | "xp" | "level" | "age_band" | "discoverable"
+        >;
+        Relationships: [];
+      };
+    };
+    Functions: Record<string, never>;
+    Enums: {
+      age_band: AgeBand;
+      user_role: UserRole;
+    };
+  };
+};
