@@ -71,7 +71,7 @@ const BattlePage = () => {
   // State A: Setup Menu
   if (!battle.isPlaying && !battle.isSearching && battle.currentQuestionIndex !== 5) {
     return (
-      <div className="min-h-screen pt-28 pb-20 relative overflow-hidden bg-[#fafafa] dark:bg-[#050505]">
+      <div className="relative min-h-screen overflow-hidden bg-background pt-28 pb-20">
         <BackgroundDecorator />
         <div className="container mx-auto px-6 max-w-3xl">
           <motion.div 
@@ -82,14 +82,14 @@ const BattlePage = () => {
           >
             <motion.div 
               whileHover={{ rotate: 10, scale: 1.1 }}
-              className="inline-flex items-center justify-center w-20 h-20 rounded-[2rem] bg-white dark:bg-white/5 shadow-2xl shadow-primary/10 border border-white/50 dark:border-white/10 mb-6 backdrop-blur-xl"
+              className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-3xl border border-border/50 bg-card shadow-game"
             >
               <Swords className="w-10 h-10 text-primary" />
             </motion.div>
-            <h1 className="text-5xl font-black mb-4 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60">
+            <h1 className="mb-4 text-5xl font-black tracking-tight text-primary">
               Arena Setup
             </h1>
-            <p className="text-muted-foreground font-semibold text-lg">Configure your legendary duel</p>
+            <p className="text-lg font-semibold text-muted-foreground">Configure your legendary duel</p>
           </motion.div>
 
           <div className="space-y-12">
@@ -107,11 +107,11 @@ const BattlePage = () => {
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedSubject(s.id)}
                     className={cn(
-                      "relative group p-6 rounded-[2.5rem] transition-all border-2 overflow-hidden backdrop-blur-md shadow-lg shadow-black/5",
+                      "glass-card relative group overflow-hidden rounded-3xl border-2 p-6 transition-all",
                       idx === 0 || idx === 3 ? "col-span-4" : "col-span-2",
-                      selectedSubject === s.id 
-                        ? "bg-white dark:bg-white/10 border-primary shadow-2xl shadow-primary/10" 
-                        : "bg-white/40 dark:bg-white/5 border-transparent hover:border-white/50"
+                      selectedSubject === s.id
+                        ? "border-primary shadow-game"
+                        : "border-transparent hover:border-primary/20"
                     )}
                   >
                     <div className="flex items-center gap-4 relative z-10">
@@ -148,10 +148,10 @@ const BattlePage = () => {
                     whileTap={{ scale: 0.97 }}
                     onClick={() => setSelectedAge(age.id)}
                     className={cn(
-                      "flex-1 flex flex-col items-center p-5 rounded-[2rem] transition-all border-2 backdrop-blur-md",
+                      "glass-card flex flex-1 flex-col items-center rounded-3xl border-2 p-5 transition-all",
                       selectedAge === age.id
-                        ? "bg-white dark:bg-white/10 border-primary shadow-xl shadow-primary/5"
-                        : "bg-white/40 dark:bg-white/5 border-transparent text-muted-foreground opacity-70"
+                        ? "border-primary shadow-game"
+                        : "border-transparent text-muted-foreground opacity-70 hover:border-primary/20 hover:opacity-100"
                     )}
                   >
                     <span className="text-3xl mb-2">{age.icon}</span>
@@ -162,11 +162,13 @@ const BattlePage = () => {
               </div>
             </section>
 
-            <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 disabled={!selectedSubject}
                 onClick={() => selectedSubject && battle.startSearch(selectedSubject, selectedAge)}
-                className="w-full py-10 text-2xl font-black rounded-[2.5rem] shadow-2xl shadow-primary/20 bg-primary text-primary-foreground relative overflow-hidden group"
+                variant="cta"
+                size="xl"
+                className="animate-pulse-glow relative w-full overflow-hidden py-5 text-lg disabled:opacity-50"
               >
                 <motion.div 
                   initial={{ x: "-100%" }}
@@ -269,7 +271,7 @@ const BattlePage = () => {
     const playerRank = allParticipants.findIndex(p => p.isPlayer) + 1;
 
     return (
-      <div className="min-h-screen pt-28 pb-20 bg-[#fafafa] dark:bg-[#050505]">
+      <div className="min-h-screen bg-background pt-28 pb-20">
         <BackgroundDecorator />
         <div className="container mx-auto px-6 max-w-xl">
           <motion.div
@@ -306,7 +308,7 @@ const BattlePage = () => {
               Arena Standing: Rank #{playerRank}
             </p>
 
-            <div className="bg-white dark:bg-white/5 backdrop-blur-2xl rounded-[3rem] p-4 shadow-2xl border border-white/50 dark:border-white/10 mb-10 overflow-hidden">
+            <div className="glass-card mb-10 overflow-hidden rounded-3xl p-4">
               <div className="space-y-3">
                 {allParticipants.map((p, i) => (
                   <motion.div
@@ -341,18 +343,22 @@ const BattlePage = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Button 
-                onClick={() => battle.resetBattle()} 
-                className="py-10 rounded-[2rem] font-black text-lg bg-white dark:bg-white/10 text-primary border-2 border-primary/10 shadow-xl hover:bg-white/80 active:scale-95 transition-all"
+              <Button
+                onClick={() => battle.resetBattle()}
+                variant="ctaSecondary"
+                size="xl"
+                className="py-5"
               >
-                <RotateCcw className="mr-3 w-6 h-6" /> REMATCH
+                <RotateCcw className="mr-3 h-6 w-6" /> REMATCH
               </Button>
-              <Button 
+              <Button
                 onClick={() => {
                   battle.resetBattle();
                   navigate("/");
                 }}
-                className="py-10 rounded-[2rem] font-black text-lg shadow-2xl active:scale-95 transition-all"
+                variant="cta"
+                size="xl"
+                className="py-5"
               >
                 LEAVE ARENA
               </Button>
@@ -374,14 +380,14 @@ const BattlePage = () => {
       : "from-rose-500 to-red-600";
 
   return (
-    <div className="min-h-screen pt-28 pb-16 bg-[#fafafa] dark:bg-[#050505] relative overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden bg-background pt-28 pb-16">
       <BackgroundDecorator />
       <div className="container mx-auto px-6 max-w-2xl relative z-10">
         <LayoutGroup>
           {/* Header Scoreboard - Floating Glass */}
           <motion.div 
             layout
-            className="flex items-center justify-between mb-10 bg-white/60 dark:bg-white/5 backdrop-blur-2xl p-6 rounded-[2.5rem] shadow-2xl border border-white dark:border-white/10"
+            className="glass-card mb-10 flex items-center justify-between rounded-3xl p-6"
           >
             <div className="flex -space-x-4">
               <motion.div 
@@ -444,7 +450,7 @@ const BattlePage = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
-            className="bg-white dark:bg-white/5 backdrop-blur-[40px] rounded-[3rem] p-10 shadow-2xl border border-white dark:border-white/10 mb-8 relative overflow-hidden"
+            className="glass-card relative mb-8 overflow-hidden rounded-3xl p-10"
           >
             <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.07] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
             
