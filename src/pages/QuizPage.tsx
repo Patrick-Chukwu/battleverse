@@ -6,13 +6,7 @@ import { useGameStore } from "@/store/gameStore";
 import { Timer, CheckCircle2, XCircle, ArrowRight, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const answerColors = [
-  "bg-blue-500 hover:bg-blue-600 border-blue-700",
-  "bg-emerald-500 hover:bg-emerald-600 border-emerald-700",
-  "bg-amber-500 hover:bg-amber-600 border-amber-700",
-  "bg-rose-500 hover:bg-rose-600 border-rose-700",
-];
-
+const answerClasses = ["answer-a", "answer-b", "answer-c", "answer-d"];
 const answerLabels = ["A", "B", "C", "D"];
 
 const QuizPage = () => {
@@ -97,7 +91,7 @@ const QuizPage = () => {
 
   if (!subject || questions.length === 0) {
     return (
-      <div className="min-h-screen pt-24 flex items-center justify-center bg-[#F8F9FA]">
+      <div className="flex min-h-screen items-center justify-center bg-background pt-24">
         <div className="text-center">
           <motion.div 
             animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
@@ -106,7 +100,7 @@ const QuizPage = () => {
           >
             🎮
           </motion.div>
-          <p className="text-2xl font-black text-gray-400">Loading quiz...</p>
+          <p className="text-2xl font-black text-muted-foreground">Loading quiz...</p>
         </div>
       </div>
     );
@@ -116,12 +110,12 @@ const QuizPage = () => {
     const finalCorrect = answers.filter(Boolean).length;
     const percentage = Math.round((finalCorrect / questions.length) * 100);
     return (
-      <div className="min-h-screen pt-24 pb-16 flex items-center justify-center bg-[#F8F9FA] px-4">
+      <div className="flex min-h-screen items-center justify-center bg-background px-4 pt-24 pb-16">
         <motion.div
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", bounce: 0.5 }}
-          className="bg-white rounded-[3rem] p-12 max-w-lg w-full text-center shadow-2xl shadow-gray-200/50 border border-gray-100"
+          className="glass-card w-full max-w-lg rounded-3xl p-12 text-center"
         >
           <motion.div
             initial={{ scale: 0 }}
@@ -131,21 +125,21 @@ const QuizPage = () => {
           >
             {percentage >= 80 ? "🏆" : percentage >= 50 ? "⭐" : "💪"}
           </motion.div>
-          <h2 className="text-4xl font-black mb-3 text-gray-900">
+          <h2 className="mb-3 text-4xl font-black">
             {percentage >= 80 ? "Amazing!" : percentage >= 50 ? "Good Job!" : "Keep Trying!"}
           </h2>
-          <p className="text-xl text-gray-500 font-bold mb-10">
+          <p className="mb-10 text-xl font-bold text-muted-foreground">
             You scored {finalCorrect} out of {questions.length}
           </p>
 
-          <div className="grid grid-cols-2 gap-6 mb-10">
-            <div className="bg-indigo-50 rounded-[2rem] p-6 border border-indigo-100/50">
-              <p className="text-4xl font-black text-indigo-600">{score}</p>
-              <p className="text-sm text-indigo-400 font-black uppercase tracking-wider mt-1">XP Earned</p>
+          <div className="mb-10 grid grid-cols-2 gap-6">
+            <div className="rounded-3xl border border-primary/20 bg-primary/10 p-6">
+              <p className="text-4xl font-black text-primary">{score}</p>
+              <p className="mt-1 text-sm font-black text-primary/70">XP Earned</p>
             </div>
-            <div className="bg-amber-50 rounded-[2rem] p-6 border border-amber-100/50">
-              <p className="text-4xl font-black text-amber-600">{percentage}%</p>
-              <p className="text-sm text-amber-400 font-black uppercase tracking-wider mt-1">Accuracy</p>
+            <div className="rounded-3xl border border-game-orange/20 bg-game-orange/10 p-6">
+              <p className="text-4xl font-black text-game-orange">{percentage}%</p>
+              <p className="mt-1 text-sm font-black text-game-orange/70">Accuracy</p>
             </div>
           </div>
 
@@ -164,7 +158,7 @@ const QuizPage = () => {
                 setAnswers([]);
                 setQuestions(shuffleArray(getQuestionsBySubject(subjectId as Subject)).slice(0, 8));
               }}
-              className="bg-primary text-white px-8 py-5 rounded-2xl text-xl font-black shadow-xl shadow-indigo-500/20 transition-all"
+              className="rounded-2xl bg-primary px-8 py-4 text-lg font-black text-primary-foreground shadow-lg shadow-primary/20 transition-all"
             >
               Play Again 🔄
             </motion.button>
@@ -172,7 +166,7 @@ const QuizPage = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate("/subjects")}
-              className="bg-gray-100 text-gray-600 px-8 py-5 rounded-2xl text-xl font-black hover:bg-gray-200 transition-all"
+              className="rounded-2xl bg-muted px-8 py-4 text-lg font-black text-muted-foreground transition-all hover:bg-muted/80"
             >
               Try Another Subject
             </motion.button>
@@ -187,47 +181,47 @@ const QuizPage = () => {
   const progress = ((currentIndex + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen pt-24 pb-8 px-4 bg-[#F8F9FA]">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-background px-4 pt-24 pb-8">
+      <div className="mx-auto max-w-3xl">
         {/* Header Info */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl shadow-sm border border-gray-100">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-3 rounded-2xl bg-card px-4 py-2 shadow-game">
             <span className="text-2xl">{subject.emoji}</span>
-            <span className="font-black text-gray-700">{subject.name}</span>
+            <span className="font-black">{subject.name}</span>
           </div>
           <div className="flex items-center gap-6">
             {streak >= 2 && (
-              <motion.span 
-                initial={{ scale: 0 }} 
-                animate={{ scale: 1 }} 
-                className="text-lg font-black text-amber-500 flex items-center gap-1"
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="flex items-center gap-1 text-lg font-black text-game-orange"
               >
                 🔥 {streak} STREAK!
               </motion.span>
             )}
-            <span className="font-black text-primary text-2xl">{score} XP</span>
+            <span className="text-2xl font-black text-primary">{score} XP</span>
           </div>
         </div>
 
         {/* Progress & Timer Bar */}
-        <div className="flex items-center gap-4 mb-10">
-          <div className="flex-1 h-4 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+        <div className="mb-10 flex items-center gap-4">
+          <div className="h-4 flex-1 overflow-hidden rounded-full bg-muted shadow-inner">
             <motion.div
-              className="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"
+              className="h-full rounded-full bg-primary shadow-[0_0_10px_color-mix(in_srgb,var(--primary)_50%,transparent)]"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.5, type: "spring" }}
             />
           </div>
-          <div className="flex items-center gap-2 bg-white px-6 py-2 rounded-full shadow-sm border border-gray-100 min-w-[100px] justify-center">
-            <Timer className={cn("w-5 h-5", timeLeft <= 5 ? "text-rose-500 animate-pulse" : "text-primary")} />
-            <span className={cn("text-xl font-black tabular-nums", timeLeft <= 5 ? "text-rose-500" : "text-gray-900")}>
+          <div className="flex min-w-[100px] items-center justify-center gap-2 rounded-full bg-card px-6 py-2 shadow-game">
+            <Timer className={cn("h-5 w-5", timeLeft <= 5 ? "animate-pulse text-destructive" : "text-primary")} />
+            <span className={cn("text-xl font-black tabular-nums", timeLeft <= 5 ? "text-destructive" : "")}>
               {timeLeft}s
             </span>
           </div>
         </div>
 
-        <p className="text-lg text-gray-400 font-black mb-6 text-center uppercase tracking-widest">
+        <p className="mb-6 text-center text-lg font-black tracking-widest text-muted-foreground uppercase">
           Question {currentIndex + 1} of {questions.length}
         </p>
 
@@ -240,29 +234,26 @@ const QuizPage = () => {
             exit={{ x: -50, opacity: 0 }}
             transition={{ type: "spring", bounce: 0.3 }}
           >
-            <div className="bg-white rounded-[3rem] p-12 sm:p-20 mb-8 text-center shadow-xl shadow-gray-200/50 border border-gray-100">
-              <h2 className="text-3xl sm:text-5xl font-black text-gray-900 leading-tight">
+            <div className="glass-card mb-8 rounded-3xl p-8 text-center sm:p-12">
+              <h2 className="text-2xl font-black sm:text-3xl">
                 {question.question}
               </h2>
             </div>
 
             {/* Answers 2x2 Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {question.options.map((option, i) => {
                 let stateClass = "";
-                let shadowClass = "shadow-[0_6px_0_rgba(0,0,0,0.15)]";
-                
+
                 if (showFeedback) {
                   if (i === question.correctIndex) {
-                    stateClass = "!bg-emerald-500 !border-emerald-700 !text-white";
-                    shadowClass = "shadow-[0_6px_0_#065f46]";
+                    stateClass = "!bg-success !border-success !text-success-foreground";
                   }
                   else if (i === selectedAnswer && !isCorrect) {
-                    stateClass = "!bg-rose-500 !border-rose-700 !text-white opacity-100";
-                    shadowClass = "shadow-[0_6px_0_#9f1239]";
+                    stateClass = "!bg-destructive !border-destructive !text-destructive-foreground";
                   }
                   else {
-                    stateClass = "opacity-40 grayscale-[0.5]";
+                    stateClass = "opacity-50";
                   }
                 }
 
@@ -270,18 +261,16 @@ const QuizPage = () => {
                   <motion.button
                     key={i}
                     whileHover={!showFeedback ? { scale: 1.02, y: -2 } : {}}
-                    whileTap={!showFeedback ? { scale: 0.98, y: 4 } : {}}
+                    whileTap={!showFeedback ? { scale: 0.98 } : {}}
                     onClick={() => handleAnswer(i)}
                     disabled={showFeedback}
                     className={cn(
-                      "relative flex items-center gap-4 p-6 sm:p-8 rounded-3xl text-xl font-black text-white text-left transition-all border-b-0",
-                      answerColors[i],
-                      shadowClass,
-                      stateClass,
-                      !showFeedback && "active:translate-y-1 active:shadow-none"
+                      "answer-option",
+                      answerClasses[i],
+                      stateClass
                     )}
                   >
-                    <span className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center text-2xl font-black shrink-0 shadow-inner">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/40 text-lg font-black">
                       {answerLabels[i]}
                     </span>
                     <span className="flex-1">{option}</span>
@@ -299,23 +288,23 @@ const QuizPage = () => {
                   className="mt-10"
                 >
                   <div className={cn(
-                    "rounded-[2.5rem] p-8 flex items-start gap-6 border-2 shadow-xl shadow-gray-200/50",
-                    isCorrect 
-                      ? "bg-emerald-50 border-emerald-200 text-emerald-900" 
-                      : "bg-rose-50 border-rose-200 text-rose-900"
+                    "flex items-start gap-6 rounded-3xl border-2 p-8 shadow-game",
+                    isCorrect
+                      ? "border-success/30 bg-success/10 text-foreground"
+                      : "border-destructive/30 bg-destructive/10 text-foreground"
                   )}>
                     <div className={cn(
-                      "w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 shadow-lg",
-                      isCorrect ? "bg-emerald-500 text-white" : "bg-rose-500 text-white"
+                      "flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl shadow-lg",
+                      isCorrect ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground"
                     )}>
-                      {isCorrect ? <CheckCircle2 className="w-10 h-10" /> : <XCircle className="w-10 h-10" />}
+                      {isCorrect ? <CheckCircle2 className="h-10 w-10" /> : <XCircle className="h-10 w-10" />}
                     </div>
                     <div>
-                      <p className="font-black text-3xl mb-2">
+                      <p className="mb-2 text-3xl font-black">
                         {isCorrect ? "Correct! 🎉" : "Not quite! 😊"}
                       </p>
-                      <p className="text-lg font-bold opacity-80 flex items-start gap-2 leading-relaxed">
-                        <Lightbulb className="w-6 h-6 shrink-0 mt-1 text-amber-500" />
+                      <p className="flex items-start gap-2 text-lg font-bold leading-relaxed opacity-80">
+                        <Lightbulb className="mt-1 h-6 w-6 shrink-0 text-game-orange" />
                         {question.explanation}
                       </p>
                     </div>
@@ -324,10 +313,10 @@ const QuizPage = () => {
                   <motion.button
                     initial={{ scale: 0.9 }}
                     animate={{ scale: 1 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={nextQuestion}
-                    className="w-full mt-8 bg-primary text-white py-6 rounded-3xl font-black text-2xl shadow-xl shadow-indigo-500/30 transition-all flex items-center justify-center gap-3"
+                    className="mt-4 flex w-full items-center justify-center gap-3 rounded-2xl bg-primary py-3 text-lg font-black text-primary-foreground shadow-lg shadow-primary/20 transition-all"
                   >
                     {currentIndex + 1 >= questions.length ? "See Results 🏆" : "Next Question"}
                     <ArrowRight className="w-8 h-8" />

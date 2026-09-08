@@ -2,21 +2,29 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { subjects } from "@/data/quizData";
 import { ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const subjectHover: Record<string, string> = {
+  "game-blue": "hover:border-game-blue/30",
+  "game-purple": "hover:border-game-purple/30",
+  "game-orange": "hover:border-game-orange/30",
+  "game-green": "hover:border-game-green/30",
+};
 
 const SubjectsPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-[#F8F9FA]">
-      <div className="container mx-auto px-4 max-w-5xl">
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center mb-16">
-          <h1 className="text-5xl font-black mb-4 text-gray-900 tracking-tight">
+    <div className="min-h-screen bg-background pt-24 pb-16">
+      <div className="container mx-auto max-w-5xl px-4">
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-12 text-center">
+          <h1 className="mb-2 text-4xl font-black tracking-tight">
             Choose Your Subject 📚
           </h1>
-          <p className="text-gray-500 font-bold text-xl">Pick a topic and test your knowledge</p>
+          <p className="text-xl font-bold text-muted-foreground">Pick a topic and test your knowledge</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {subjects.map((subject, i) => (
             <motion.button
               key={subject.id}
@@ -26,16 +34,19 @@ const SubjectsPage = () => {
               whileHover={{ y: -8, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => navigate(`/quiz/${subject.id}`)}
-              className="bg-white rounded-[2.5rem] p-10 text-left group cursor-pointer border-2 border-gray-50 shadow-sm hover:shadow-xl hover:border-primary/10 transition-all flex items-center gap-8"
+              className={cn(
+                "glass-card group flex min-h-[246px] cursor-pointer items-center gap-8 rounded-3xl border-2 border-transparent p-8 text-left transition-all hover:game-shadow",
+                subjectHover[subject.color]
+              )}
             >
-              <div className="text-7xl shrink-0 transform group-hover:scale-110 transition-transform duration-300">
+              <div className="shrink-0 text-7xl transition-transform duration-300 group-hover:scale-110">
                 {subject.emoji}
               </div>
               <div className="flex-1">
-                <h2 className="text-3xl font-black mb-2 text-gray-900">{subject.name}</h2>
-                <p className="text-gray-500 font-medium leading-relaxed mb-6">{subject.description}</p>
-                <div className="flex items-center gap-2 text-primary font-black uppercase tracking-wider text-sm opacity-60 group-hover:opacity-100 transition-opacity">
-                  Start Quiz <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <h2 className="mb-2 text-2xl font-black">{subject.name}</h2>
+                <p className="mb-6 font-medium leading-relaxed text-muted-foreground">{subject.description}</p>
+                <div className="flex items-center gap-2 text-sm font-black text-primary transition-opacity">
+                  Start Quiz <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
             </motion.button>

@@ -2,18 +2,22 @@ import { motion } from "framer-motion";
 import { useGameStore } from "@/store/gameStore";
 import { getLevel } from "@/data/gameData";
 import { Pencil } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const ProfilePage = () => {
   const { profile } = useGameStore();
   const levelInfo = getLevel(profile.xp);
-  const nextLevelXp = (levelInfo.level + 1) * 1000; // Simplified for UI
-  const progress = (profile.xp / nextLevelXp) * 100;
+  const nextLevelXp = levelInfo.nextLevelXp;
+  const progress = levelInfo.progress;
+  const accuracy = profile.totalAnswers
+    ? Math.round((profile.correctAnswers / profile.totalAnswers) * 100)
+    : 0;
 
   const stats = [
-    { label: "Quizzes", value: profile.quizzesCompleted, icon: "📝", color: "text-indigo-500", bg: "bg-indigo-50" },
-    { label: "Accuracy", value: "94%", icon: "🎯", color: "text-emerald-500", bg: "bg-emerald-50" },
-    { label: "Coins", value: profile.coins, icon: "🪙", color: "text-amber-500", bg: "bg-amber-50" },
-    { label: "Streak", value: profile.streak, icon: "🔥", color: "text-rose-500", bg: "bg-rose-50" },
+    { label: "Quizzes", value: profile.quizzesCompleted, icon: "📝", color: "text-primary", bg: "bg-primary/10" },
+    { label: "Accuracy", value: `${accuracy}%`, icon: "🎯", color: "text-game-green", bg: "bg-game-green/10" },
+    { label: "Coins", value: profile.coins, icon: "🪙", color: "text-game-orange", bg: "bg-game-orange/10" },
+    { label: "Streak", value: profile.streak, icon: "🔥", color: "text-game-pink", bg: "bg-game-pink/10" },
   ];
 
   const badges = [
@@ -28,76 +32,70 @@ const ProfilePage = () => {
   ];
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-[#F8F9FA]">
-      <div className="container mx-auto px-4 max-w-4xl">
-        {/* Header Profile Card */}
+    <div className="min-h-screen bg-background pt-24 pb-16">
+      <div className="container mx-auto max-w-4xl px-4">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="bg-white rounded-[3rem] p-10 mb-8 text-center shadow-xl shadow-gray-200/50 border border-gray-100 relative overflow-hidden"
+          className="glass-card relative mb-8 overflow-hidden rounded-3xl p-10 text-center"
         >
           <div className="relative z-10">
-            <div className="relative inline-block mb-6">
-              <span className="text-8xl block">{profile.avatar}</span>
+            <div className="relative mb-6 inline-block">
+              <span className="block text-8xl">{profile.avatar}</span>
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="absolute bottom-0 right-0 bg-white p-2 rounded-xl shadow-lg border border-gray-100 text-gray-400 hover:text-primary transition-colors"
+                className="absolute right-0 bottom-0 rounded-xl border border-border bg-card p-2 text-muted-foreground shadow-lg transition-colors hover:text-primary"
               >
-                <Pencil className="w-5 h-5" />
+                <Pencil className="h-5 w-5" />
               </motion.button>
             </div>
-            
-            <h1 className="text-4xl font-black mb-1 text-gray-900 flex items-center justify-center gap-2">
+
+            <h1 className="mb-1 flex items-center justify-center gap-2 text-2xl font-black sm:text-4xl">
               {profile.name}
             </h1>
-            <p className="text-xl text-gray-400 font-bold mb-8">
+            <p className="mb-8 text-xl font-bold text-muted-foreground">
               Level {levelInfo.level} • {levelInfo.title}
             </p>
 
-            <div className="max-w-md mx-auto">
-              <div className="flex justify-between text-sm font-black uppercase tracking-widest mb-3">
+            <div className="mx-auto max-w-md">
+              <div className="mb-3 flex justify-between text-sm font-black">
                 <span className="text-primary">{profile.xp} XP</span>
-                <span className="text-gray-300">{nextLevelXp} XP</span>
+                <span className="text-muted-foreground">{nextLevelXp} XP</span>
               </div>
-              <div className="h-4 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+              <div className="h-4 overflow-hidden rounded-full bg-muted shadow-inner">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 1, type: "spring" }}
-                  className="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(99,102,241,0.3)]"
+                  className="h-full rounded-full bg-primary shadow-[0_0_10px_color-mix(in_srgb,var(--primary)_30%,transparent)]"
                 />
               </div>
             </div>
           </div>
-          
-          {/* Decorative background */}
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-indigo-300" />
         </motion.div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-12">
+        <div className="mb-12 grid grid-cols-2 gap-6 sm:grid-cols-4">
           {stats.map((stat, i) => (
             <motion.div
               key={stat.label}
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: i * 0.1, type: "spring", bounce: 0.5 }}
-              className="bg-white rounded-[2rem] p-6 text-center shadow-sm border border-gray-100"
+              className="glass-card rounded-3xl p-6 text-center"
             >
-              <span className="text-4xl block mb-2">{stat.icon}</span>
-              <p className={cn("text-2xl font-black mb-0.5", stat.color)}>{stat.value}</p>
-              <p className="text-xs text-gray-400 font-black uppercase tracking-widest">{stat.label}</p>
+              <span className="mb-2 block text-4xl">{stat.icon}</span>
+              <p className={cn("mb-0.5 text-2xl font-black", stat.color)}>{stat.value}</p>
+              <p className="text-sm font-bold text-muted-foreground">{stat.label}</p>
             </motion.div>
           ))}
         </div>
 
-        {/* Badges Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-black mb-8 text-gray-900 flex items-center gap-3">
-            Badges <span className="text-2xl">🏅</span>
+          <h2 className="mb-4 text-2xl font-black">
+            Badges 🏅
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {badges.map((badge, i) => (
               <motion.div
                 key={badge.id}
@@ -105,20 +103,20 @@ const ProfilePage = () => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4 + i * 0.05 }}
                 className={cn(
-                  "bg-white rounded-[2rem] p-6 text-center border-2 transition-all group",
-                  badge.unlocked 
-                    ? "border-amber-100 shadow-md hover:shadow-xl" 
-                    : "border-gray-50 opacity-60 grayscale"
+                  "glass-card rounded-3xl border-2 p-6 text-center transition-all group",
+                  badge.unlocked
+                    ? "border-game-orange/20 hover:shadow-game"
+                    : "border-transparent opacity-60 grayscale"
                 )}
               >
                 <div className={cn(
-                  "text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300",
+                  "mb-4 text-5xl transition-transform duration-300 group-hover:scale-110",
                   !badge.unlocked && "blur-[1px]"
                 )}>
                   {badge.icon}
                 </div>
-                <h3 className="text-lg font-black mb-1 text-gray-900">{badge.name}</h3>
-                <p className="text-xs text-gray-400 font-bold leading-tight">{badge.desc}</p>
+                <h3 className="mb-1 text-lg font-black">{badge.name}</h3>
+                <p className="text-xs font-bold leading-tight text-muted-foreground">{badge.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -127,7 +125,5 @@ const ProfilePage = () => {
     </div>
   );
 };
-
-const cn = (...classes: any[]) => classes.filter(Boolean).join(" ");
 
 export default ProfilePage;
