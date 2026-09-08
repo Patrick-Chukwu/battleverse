@@ -5,43 +5,57 @@ import { subjects } from "@/data/quizData";
 import { useGameStore } from "@/store/gameStore";
 import { getLevel } from "@/data/gameData";
 import { Swords, BookOpen, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const subjectHover: Record<string, string> = {
+  "game-blue": "hover:border-game-blue/30",
+  "game-purple": "hover:border-game-purple/30",
+  "game-orange": "hover:border-game-orange/30",
+  "game-green": "hover:border-game-green/30",
+};
 
 const HomePage = () => {
   const navigate = useNavigate();
   const { profile } = useGameStore();
   const levelInfo = getLevel(profile.xp);
 
+  const stats = [
+    { value: profile.xp, label: "Total XP", className: "text-primary" },
+    { value: levelInfo.title, label: `Level ${levelInfo.level}`, className: "text-game-orange" },
+    { value: profile.quizzesCompleted, label: "Quizzes Done", className: "text-game-green" },
+    { value: `🔥 ${profile.streak}`, label: "Streak", className: "text-game-pink" },
+  ];
+
   return (
-    <div className="min-h-screen pt-16 bg-[#F8F9FA]">
-      {/* Hero */}
-      <section className="relative min-h-[75vh] flex items-center justify-center overflow-hidden">
+    <div className="min-h-screen bg-background pt-[66px]">
+      <section className="relative flex min-h-[75vh] items-center justify-center overflow-hidden">
         <FloatingIcons />
-        
-        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+
+        <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", duration: 0.8, bounce: 0.5 }}
-            className="text-7xl mb-6"
+            className="mb-6 text-7xl"
           >
             🚀
           </motion.div>
-          
+
           <motion.h1
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-6xl sm:text-8xl font-black mb-6 tracking-tight text-gray-900"
+            className="mb-4 text-5xl font-black tracking-tight sm:text-7xl"
           >
             Welcome to{" "}
             <span className="text-primary">Battleverse</span>
           </motion.h1>
-          
+
           <motion.p
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-xl sm:text-2xl text-gray-500 font-bold mb-10"
+            className="mb-10 text-xl font-bold text-muted-foreground sm:text-2xl"
           >
             Learn. Play. Compete. 🎯
           </motion.p>
@@ -50,76 +64,64 @@ const HomePage = () => {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex flex-col justify-center gap-4 sm:flex-row"
           >
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate("/battle")}
-              className="group flex items-center justify-center gap-3 bg-primary text-white px-10 py-5 rounded-3xl text-xl font-black shadow-xl shadow-indigo-500/20 transition-all"
+              className="animate-pulse-glow group flex items-center justify-center gap-2 rounded-2xl bg-primary px-8 py-4 text-lg font-black text-primary-foreground shadow-lg transition-all hover:shadow-xl"
             >
-              <Swords className="w-6 h-6" />
+              <Swords className="h-6 w-6" />
               Start Battle
-              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-6 w-6 transition-transform group-hover:translate-x-1" />
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate("/subjects")}
-              className="flex items-center justify-center gap-3 bg-white text-gray-900 px-10 py-5 rounded-3xl text-xl font-black border-2 border-gray-100 shadow-lg hover:border-gray-200 transition-all"
+              className="flex items-center justify-center gap-2 rounded-2xl border-2 border-border bg-card px-8 py-4 text-lg font-black text-foreground transition-all hover:border-primary/30 hover:bg-primary/5"
             >
-              <BookOpen className="w-6 h-6" />
+              <BookOpen className="h-6 w-6" />
               Practice Solo
             </motion.button>
           </motion.div>
         </div>
       </section>
 
-      {/* Stats Bar */}
       <motion.section
         initial={{ y: 30, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         viewport={{ once: true }}
-        className="container mx-auto px-4 -mt-12 relative z-20"
+        className="relative z-20 container mx-auto -mt-12 px-4"
       >
-        <div className="bg-white rounded-full p-4 sm:p-6 shadow-xl shadow-gray-200/50 flex flex-wrap items-center justify-center gap-6 sm:gap-16 border border-gray-100">
-          <div className="text-center">
-            <p className="text-3xl font-black text-primary">{profile.xp}</p>
-            <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">Total XP</p>
-          </div>
-          <div className="w-px h-10 bg-gray-100 hidden sm:block" />
-          <div className="text-center">
-            <p className="text-3xl font-black text-amber-500">{levelInfo.title}</p>
-            <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">Level {levelInfo.level}</p>
-          </div>
-          <div className="w-px h-10 bg-gray-100 hidden sm:block" />
-          <div className="text-center">
-            <p className="text-3xl font-black text-emerald-500">{profile.quizzesCompleted}</p>
-            <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">Quizzes Done</p>
-          </div>
-          <div className="w-px h-10 bg-gray-100 hidden sm:block" />
-          <div className="text-center">
-            <p className="text-3xl font-black text-rose-500">🔥 {profile.streak}</p>
-            <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">Streak</p>
-          </div>
+        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 lg:grid-cols-4">
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="glass-card rounded-3xl p-6 text-center"
+            >
+              <p className={cn("text-3xl font-black", stat.className)}>{stat.value}</p>
+              <p className="mt-1 text-sm font-bold text-muted-foreground">{stat.label}</p>
+            </div>
+          ))}
         </div>
       </motion.section>
 
-      {/* Subjects */}
       <section className="container mx-auto px-4 py-24">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="mb-16 text-center"
         >
-          <h2 className="text-4xl font-black mb-3 text-gray-900">
+          <h2 className="mb-2 text-center text-3xl font-black">
             Choose Your Arena ⚔️
           </h2>
-          <p className="text-lg text-gray-500 font-bold">Pick a subject and start your quest</p>
+          <p className="text-lg font-bold text-muted-foreground">Pick a subject and start your quest</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {subjects.map((subject, i) => (
             <motion.button
               key={subject.id}
@@ -130,45 +132,46 @@ const HomePage = () => {
               whileHover={{ y: -8, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => navigate(`/quiz/${subject.id}`)}
-              className="bg-white rounded-[2.5rem] p-8 text-center group cursor-pointer border-2 border-gray-50 shadow-sm hover:shadow-xl hover:border-primary/10 transition-all flex flex-col items-center"
+              className={cn(
+                "glass-card group cursor-pointer rounded-3xl border-2 border-transparent p-6 text-left transition-all",
+                subjectHover[subject.color]
+              )}
             >
-              <div className="text-7xl mb-6 transform group-hover:scale-110 transition-transform duration-300">
+              <div className="mb-4 text-5xl transition-transform duration-300 group-hover:scale-110">
                 {subject.emoji}
               </div>
-              <h3 className="text-2xl font-black mb-2 text-gray-900">{subject.name}</h3>
-              <p className="text-gray-500 font-medium leading-relaxed mb-6">{subject.description}</p>
-              <div className="mt-auto flex items-center gap-2 text-primary font-black text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
-                START QUIZ <ArrowRight className="w-4 h-4" />
+              <h3 className="mb-1 text-lg font-black">{subject.name}</h3>
+              <p className="mb-4 font-medium leading-relaxed text-muted-foreground">{subject.description}</p>
+              <div className="flex items-center gap-2 text-sm font-black text-primary">
+                Play Now <ArrowRight className="h-4 w-4" />
               </div>
             </motion.button>
           ))}
         </div>
       </section>
 
-      {/* Banner */}
       <section className="container mx-auto px-4 pb-24">
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
           whileInView={{ scale: 1, opacity: 1 }}
           viewport={{ once: true }}
-          className="bg-primary rounded-[3rem] p-12 sm:p-20 text-center relative overflow-hidden shadow-2xl shadow-indigo-500/20"
+          className="relative overflow-hidden rounded-3xl bg-primary p-12 text-center shadow-2xl shadow-primary/20 sm:p-20"
         >
           <div className="relative z-10">
-            <h2 className="text-4xl sm:text-6xl font-black mb-6 text-white">Level Up Your Brain 🧠</h2>
-            <p className="text-xl sm:text-2xl text-white/80 font-bold mb-10">Battle. Learn. Win. — Future Tech Starts Here</p>
+            <h2 className="mb-3 text-3xl font-black text-primary-foreground sm:text-4xl">Level Up Your Brain 🧠</h2>
+            <p className="mb-10 text-xl font-bold text-primary-foreground/80 sm:text-2xl">Battle. Learn. Win. — Future Tech Starts Here</p>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate("/subjects")}
-              className="bg-white text-primary px-12 py-5 rounded-3xl text-xl font-black shadow-lg transition-all"
+              className="rounded-2xl bg-card px-8 py-3 font-black text-foreground shadow-lg transition-all"
             >
               Start Learning Now
             </motion.button>
           </div>
-          
-          {/* Decorative shapes */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-400/20 rounded-full -ml-32 -mb-32 blur-3xl" />
+
+          <div className="absolute top-0 right-0 -mt-32 -mr-32 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute bottom-0 left-0 -mb-32 -ml-32 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         </motion.div>
       </section>
     </div>
