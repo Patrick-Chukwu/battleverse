@@ -3,8 +3,11 @@
 -- Does NOT delete auth.users.
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
-DROP FUNCTION IF EXISTS public.handle_new_user();
-DROP FUNCTION IF EXISTS public.set_updated_at();
+DROP TRIGGER IF EXISTS profiles_updated_at ON public.profiles;
+DROP TRIGGER IF EXISTS questions_updated_at ON public.questions;
+DROP TRIGGER IF EXISTS tests_updated_at ON public.tests;
+DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
+DROP FUNCTION IF EXISTS public.set_updated_at() CASCADE;
 
 DROP VIEW IF EXISTS public.public_profiles;
 
