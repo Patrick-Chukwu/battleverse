@@ -23,28 +23,15 @@ This Cloud Agent cannot log into your Supabase project (the Supabase MCP you add
      (later add `https://thebattleverse.vercel.app/**` for production)
 10. Optional but helpful for local testing: **Authentication** → **Providers** → Email → turn **Confirm email** off if codes/links are delayed. Keep it on for production.
 
-### Email should be a typed code, not a localhost link
+### Email (default magic link for now)
 
-Supabase’s default “Magic Link” email only contains `{{ .ConfirmationURL }}`. That URL is `http://localhost:5173/...`, so it works on the laptop and fails on your phone.
+Custom SMTP and a branded 6-digit OTP template are **paused** while bootstrapping. Use Supabase’s default Magic Link email.
 
-The app already accepts a **6-digit code**. Change the email template:
+1. On `/login`, enter your email and send the sign-in mail.
+2. Open the email **on the same laptop** and tap the link. The app detects the session in the URL.
+3. If the email also has a 6-digit `{{ .Token }}` later, you can type it on the OTP screen instead.
 
-1. Dashboard → **Authentication** → **Email Templates** (sometimes under **Authentication** → **Emails**).
-2. Open **Magic Link**.
-3. Replace the body with the contents of `supabase/email-templates/magic-link.html`, or paste:
-
-```html
-<h2>Your Battleverse sign-in code</h2>
-<p>Enter this code in the app. Do not share it.</p>
-<p style="font-size: 32px; font-weight: 800; letter-spacing: 6px;">{{ .Token }}</p>
-<p>The code expires in about an hour.</p>
-```
-
-4. **Save**.
-5. Also edit **Confirm signup** the same way if that template still has a link (first-time accounts sometimes use it).
-6. Request a new code on `/login`. The new email should show digits like `847291`. Type them on the laptop (or on your phone if you open the deployed site).
-
-You can still add `https://thebattleverse.vercel.app` as a redirect later if you want a tappable link on phones. You do not need that for OTP.
+When you are ready to pay for SMTP / phone-friendly codes, change the Magic Link template to `{{ .Token }}` (see `supabase/email-templates/magic-link.html`) and add `https://thebattleverse.vercel.app/**` to Redirect URLs.
 
 ## B. Create `.env.local` (URL + anon key)
 
@@ -79,8 +66,8 @@ pnpm run dev
 
 2. Open the URL Vite prints (usually `http://localhost:5173`).
 3. Click **Sign in** (top right, desktop) or go to `/login`.
-4. Enter your email → **Send code**.
-5. Open the email from Supabase → copy the 6-digit code → **Verify**.
+4. Enter your email → **Send sign-in email**.
+5. Open the email on this laptop and tap the magic link (default Supabase mail). The app should sign you in. If the mail later has a 6-digit code, you can type that instead.
 6. If asked, pick a username (letters/numbers/underscore, 3–20 chars) and avatar → **Save and play**.
 7. Go to **Profile**. Click the pencil on the avatar. Change username or avatar → **Save**. You should see “Profile saved to your account.”
 8. **Second browser** (or Chrome Incognito):

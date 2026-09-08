@@ -1,10 +1,15 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { getQuestionsBySubject, shuffleArray, subjects, type Subject, type Question } from "@/data/quizData";
+import { subjects, type Subject, type Question } from "@/data/quizData";
 import { useGameStore } from "@/store/gameStore";
 import { Timer, CheckCircle2, XCircle, ArrowRight, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { loadPracticeQuestions } from "@/lib/practice-questions";
+import { enqueueOutbox } from "@/lib/practice-sync";
+import { isServerProfileEnabled } from "@/lib/flags";
+import { useSession } from "@/hooks/useSession";
+import { practiceXp } from "@/lib/practice-score";
 
 const answerClasses = ["answer-a", "answer-b", "answer-c", "answer-d"];
 const answerLabels = ["A", "B", "C", "D"];
@@ -13,6 +18,9 @@ const QuizPage = () => {
   const { subjectId } = useParams<{ subjectId: string }>();
   const navigate = useNavigate();
   const { addXp, addCoins, completeQuiz, earnBadge } = useGameStore();
+  const { data: session } = useSession();
+  const sessionIdRef = useRef(crypto.randomUUID());
+  const shouldSync = Boolean(session && isServerProfileEnabled());
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -27,30 +35,20 @@ const QuizPage = () => {
   const subject = subjects.find(s => s.id === subjectId);
 
   useEffect(() => {
-    if (subjectId) {
-      const qs = shuffleArray(getQuestionsBySubject(subjectId as Subject)).slice(0, 8);
-      setQuestions(qs);
-    }
+    if (!subjectId) return;
+    sessionIdRef.current = crypto.randomUUID();
+    void loadPracticeQuestions(subjectId as Subject).then(setQuestions);
   }, [subjectId]);
-
-  useEffect(() => {
-    if (showFeedback || isFinished || questions.length === 0) return;
-    if (timeLeft <= 0) {
-      handleAnswer(-1);
-      return;
-    }
-    const timer = setTimeout(() => setTimeLeft(t => t - 1), 1000);
-    return () => clearTimeout(timer);
-  }, [timeLeft, showFeedback, isFinished, questions.length]);
 
   const handleAnswer = useCallback((index: number) => {
     if (showFeedback) return;
     setSelectedAnswer(index);
     setShowFeedback(true);
 
-    const isCorrect = index === questions[currentIndex].correctIndex;
+    const current = questions[currentIndex];
+    const isCorrect = index === current.correctIndex;
+    const xpGain = practiceXp(timeLeft, isCorrect);
     if (isCorrect) {
-      const xpGain = 10 + Math.floor(timeLeft * 2);
       setScore(s => s + xpGain);
       setStreak(s => s + 1);
       setAnswers(a => [...a, true]);
@@ -58,7 +56,33 @@ const QuizPage = () => {
       setStreak(0);
       setAnswers(a => [...a, false]);
     }
-  }, [showFeedback, currentIndex, questions, timeLeft]);
+
+    if (shouldSync) {
+      const attemptId = crypto.randomUUID();
+      void enqueueOutbox({
+        id: attemptId,
+        type: "attempt",
+        payload: {
+          id: attemptId,
+          question_id: current.id,
+          chosen_index: index,
+          time_left: timeLeft,
+        },
+      });
+    }
+  }, [showFeedback, currentIndex, questions, timeLeft, shouldSync]);
+
+  useEffect(() => {
+    if (showFeedback || isFinished || questions.length === 0) return;
+    const timer = setTimeout(() => {
+      if (timeLeft <= 1) {
+        handleAnswer(-1);
+      } else {
+        setTimeLeft((t) => t - 1);
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [timeLeft, showFeedback, isFinished, questions.length, handleAnswer]);
 
   const nextQuestion = () => {
     if (currentIndex + 1 >= questions.length) {
@@ -73,7 +97,7 @@ const QuizPage = () => {
 
   const finishQuiz = () => {
     setIsFinished(true);
-    const correct = answers.filter(Boolean).length + (selectedAnswer === questions[currentIndex]?.correctIndex ? 1 : 0);
+    const correct = answers.filter(Boolean).length;
     const total = questions.length;
     
     addXp(score);
@@ -87,6 +111,19 @@ const QuizPage = () => {
       if (subjectId === "ai") earnBadge("ai-master");
     }
     earnBadge("first-win");
+
+    if (shouldSync) {
+      void enqueueOutbox({
+        id: sessionIdRef.current,
+        type: "finish",
+        payload: {
+          id: sessionIdRef.current,
+          subject_id: subjectId,
+          correct,
+          total,
+        },
+      });
+    }
   };
 
   if (!subject || questions.length === 0) {
@@ -156,7 +193,8 @@ const QuizPage = () => {
                 setIsFinished(false);
                 setStreak(0);
                 setAnswers([]);
-                setQuestions(shuffleArray(getQuestionsBySubject(subjectId as Subject)).slice(0, 8));
+                sessionIdRef.current = crypto.randomUUID();
+                void loadPracticeQuestions(subjectId as Subject).then(setQuestions);
               }}
               className="rounded-2xl bg-primary px-8 py-4 text-lg font-black text-primary-foreground shadow-lg shadow-primary/20 transition-all"
             >

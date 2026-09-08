@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useGameStore } from "@/store/gameStore";
-import { getLevel } from "@/data/gameData";
+import { badges as badgeCatalog, getLevel } from "@/data/gameData";
 import { Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProfileEditDialog } from "@/components/ProfileEditDialog";
@@ -27,16 +27,13 @@ const ProfilePage = () => {
     { label: "Streak", value: profile.streak, icon: "🔥", color: "text-game-pink", bg: "bg-game-pink/10" },
   ];
 
-  const badges = [
-    { id: "first-win", name: "First Victory", desc: "Complete 1 quiz", icon: "🏆", unlocked: true },
-    { id: "speed-demon", name: "Speed Demon", desc: "5 fast answers", icon: "⚡", unlocked: false },
-    { id: "genius", name: "Genius", desc: "100% score", icon: "🧠", unlocked: false },
-    { id: "streak-king", name: "Streak King", desc: "5 correct in a row", icon: "👑", unlocked: false },
-    { id: "explorer", name: "Explorer", desc: "Play all subjects", icon: "🧭", unlocked: false },
-    { id: "math-whiz", name: "Math Whiz", desc: "Perfect math score", icon: "🔢", unlocked: false },
-    { id: "tech-guru", name: "Tech Guru", desc: "Perfect tech score", icon: "💻", unlocked: false },
-    { id: "ai-master", name: "AI Master", desc: "Perfect AI score", icon: "🤖", unlocked: false },
-  ];
+  const badges = badgeCatalog.map((badge) => ({
+    id: badge.id,
+    name: badge.name,
+    desc: badge.description,
+    icon: badge.emoji,
+    unlocked: profile.earnedBadges.includes(badge.id),
+  }));
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-16">

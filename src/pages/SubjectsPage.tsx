@@ -1,8 +1,11 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { subjects } from "@/data/quizData";
+import { subjects, type Subject } from "@/data/quizData";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { lastQuestionSyncAt, subjectPackReady } from "@/lib/practice-questions";
+import { isDexieQuestionsEnabled } from "@/lib/flags";
 
 const subjectHover: Record<string, string> = {
   "game-blue": "hover:border-game-blue/30",
@@ -13,6 +16,16 @@ const subjectHover: Record<string, string> = {
 
 const SubjectsPage = () => {
   const navigate = useNavigate();
+  const [ready, setReady] = useState<Record<string, boolean>>({});
+  const [syncedAt, setSyncedAt] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isDexieQuestionsEnabled()) return;
+    void Promise.all(
+      subjects.map(async (s) => [s.id, await subjectPackReady(s.id as Subject)] as const)
+    ).then((rows) => setReady(Object.fromEntries(rows)));
+    void lastQuestionSyncAt().then(setSyncedAt);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background px-4 pt-24 pb-16">
@@ -22,6 +35,11 @@ const SubjectsPage = () => {
             Choose Your Subject 📚
           </h1>
           <p className="text-xl font-bold text-muted-foreground">Pick a topic and test your knowledge</p>
+          {syncedAt && (
+            <p className="mt-2 text-sm font-bold text-muted-foreground">
+              Question pack updated {new Date(syncedAt).toLocaleString()}
+            </p>
+          )}
         </motion.div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -48,6 +66,9 @@ const SubjectsPage = () => {
                 <div className="flex items-center gap-2 text-sm font-black text-primary transition-opacity">
                   Start Quiz <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
+                {ready[subject.id] && (
+                  <p className="mt-2 text-xs font-bold text-muted-foreground">Offline ready</p>
+                )}
               </div>
             </motion.button>
           ))}

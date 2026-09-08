@@ -1,4 +1,4 @@
-/** Feature flags from docs/BUILD_PLAN.md. Practice still reads quizData.ts until Phase 2. */
+/** Feature flags. Practice uses Dexie when Supabase is configured (Phase 2). */
 
 export function isSupabaseConfigured(): boolean {
   const url = import.meta.env.VITE_SUPABASE_URL;
@@ -10,4 +10,10 @@ export function isSupabaseConfigured(): boolean {
 export function isServerProfileEnabled(): boolean {
   if (!isSupabaseConfigured()) return false;
   return import.meta.env.VITE_USE_SERVER_PROFILE !== "false";
+}
+
+/** Dexie question cache + attempt outbox. Default on when Supabase is configured. */
+export function isDexieQuestionsEnabled(): boolean {
+  if (!isSupabaseConfigured()) return false;
+  return import.meta.env.VITE_USE_DEXIE_QUESTIONS !== "false";
 }
