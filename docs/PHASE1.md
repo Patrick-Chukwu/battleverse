@@ -21,7 +21,7 @@ This Cloud Agent cannot log into your Supabase project (the Supabase MCP you add
    - Site URL: `http://localhost:5173`
    - Redirect URLs: add `http://localhost:5173` and `http://localhost:5173/login`  
      (later add `https://thebattleverse.vercel.app/**` for production)
-9. Optional but helpful for local testing: **Authentication** → **Providers** → Email → turn **Confirm email** off if codes/links are delayed. Keep it on for production.
+10. Optional but helpful for local testing: **Authentication** → **Providers** → Email → turn **Confirm email** off if codes/links are delayed. Keep it on for production.
 
 The app expects a **6-digit email OTP**. The default Supabase email includes a code and/or a magic link. Type the code on `/login`. If you only get a link, you can click it (the app also reads the session from the URL).
 
@@ -76,5 +76,6 @@ Guest path (no account): **Continue as guest** still plays Practice/Battle as be
 | `/login` says auth is not configured | `.env.local` missing or Vite not restarted after saving it |
 | Send code errors | Email provider on; check Auth logs in the dashboard |
 | Verify fails | Use the latest code; codes expire quickly |
+| **Database error saving new user** (and no email) | Auth could not create a `profiles` row, so signup was rolled back and no mail was sent. Run `supabase/fix_signup_trigger.sql` in the SQL Editor, then try Sign in again. |
 | Profile does not sync on browser 2 | SQL `0001_init.sql` not applied (no `handle_new_user` trigger) |
 | `subjects` empty | You ran init but not `seed.sql` |
