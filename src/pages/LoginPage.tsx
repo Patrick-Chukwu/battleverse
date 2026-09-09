@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { getSupabase } from "@/lib/supabase";
@@ -36,6 +36,7 @@ const LoginPage = () => {
   const [avatar, setAvatar] = useState("🦊");
   const [ageBand, setAgeBand] = useState<AgeBand | null>(null);
   const [busy, setBusy] = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const signedInOnce = useRef(false);
 
   const goGuest = () => navigate("/");
@@ -73,6 +74,10 @@ const LoginPage = () => {
     const trimmed = email.trim().toLowerCase();
     if (!trimmed.includes("@")) {
       toast.error("Enter a valid email address.");
+      return;
+    }
+    if (!agreed) {
+      toast.error("Please agree to the Terms and Privacy Policy first.");
       return;
     }
     setBusy(true);
@@ -213,9 +218,28 @@ const LoginPage = () => {
                 disabled={!configured}
               />
             </div>
+            <label className="flex items-start gap-3 text-sm font-bold text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mt-1 h-4 w-4 accent-primary"
+              />
+              <span>
+                I agree to the{" "}
+                <Link to="/terms" className="text-primary underline">
+                  Terms of Use
+                </Link>{" "}
+                and{" "}
+                <Link to="/privacy" className="text-primary underline">
+                  Privacy Policy
+                </Link>
+                .
+              </span>
+            </label>
             <button
               type="button"
-              disabled={!configured || busy}
+              disabled={!configured || busy || !agreed}
               onClick={() => void sendOtp()}
               className="flex h-14 w-full items-center justify-center rounded-2xl bg-primary text-lg font-black text-primary-foreground shadow-lg transition-transform hover:scale-[1.02] disabled:opacity-50"
             >
@@ -328,6 +352,9 @@ const LoginPage = () => {
         >
           Continue as guest
         </button>
+        <p className="mt-4 text-center text-xs font-bold text-muted-foreground">
+          Guest practice stays on this device and does not rank on the leaderboard.
+        </p>
       </motion.div>
     </div>
   );

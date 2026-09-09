@@ -14,9 +14,12 @@ flowchart LR
   P4[Phase4 Challenge invites]
   P5[Phase5 Admin CMS]
   P6[Phase6 Exam modes]
+  P7[Phase7 Leaderboard legal]
   P1 --> P2 --> P3 --> P4
   P2 --> P5
   P5 --> P6
+  P1 --> P7
+  P2 --> P7
 ```
 
 Phase 5 can start after Phase 2 (content must exist to administer). Phase 6 needs Phase 5 tags. Phase 4 needs Phase 3 rooms.
@@ -229,6 +232,35 @@ Practice still ignores live Battle.
 
 ---
 
+## Phase 7 — Leaderboard and legal
+
+**Effort: S**  
+**Depends on:** Phase 1 profiles + XP.  
+**Setup:** [docs/PHASE7.md](./PHASE7.md) — run `0007_leaderboard.sql`.
+
+### What gets built
+
+- Server leaderboard from `public_profiles` (live XP, not `mockLeaderboard`).
+- Guests may view; they do **not** rank from local Zustand XP.
+- Privacy + Terms routes; Login requires agreement before OTP.
+- Offline: cached last snapshot.
+
+### Wire vs new
+
+| Existing | Action |
+|----------|--------|
+| `LeaderboardPage.tsx` | Replace mock list; keep podium chrome |
+| `LoginPage.tsx` | Legal checkbox + links |
+| `/privacy`, `/terms` | **New** |
+
+### Definition of done
+
+- Signed-in XP appears on `/leaderboard` after Practice sync; guest local XP does not.
+- Legal pages readable before account creation; cannot send a sign-in email without agreeing.
+- Offline reload shows the last saved board, not an empty crash.
+
+---
+
 ## Cross-cutting (every phase)
 
 - No visual redesign of learner chrome.
@@ -248,6 +280,7 @@ Practice still ignores live Battle.
 | `VITE_USE_LIVE_BATTLE` | Phase 3 |
 | `VITE_USE_INVITES` | Phase 4 |
 | `VITE_USE_EXAM_MODES` | Phase 6 |
+| `VITE_USE_SERVER_LEADERBOARD` | Phase 7 |
 
 When a flag is off, current prototype behavior remains (bots, `quizData.ts`, mock LB).
 

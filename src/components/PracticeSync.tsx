@@ -12,6 +12,7 @@ export function PracticeSync() {
     const run = () => {
       void syncPractice().then(() => {
         void queryClient.invalidateQueries({ queryKey: ["profile"] });
+        void queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
       });
     };
 

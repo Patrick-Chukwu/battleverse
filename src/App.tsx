@@ -17,6 +17,7 @@ import LeaderboardPage from "./pages/LeaderboardPage";
 import ProfilePage from "./pages/ProfilePage";
 import BattlePage from "./pages/BattlePage";
 import LoginPage from "./pages/LoginPage";
+import LegalPage from "./pages/LegalPage";
 import AdminPage from "./pages/AdminPage";
 import NotFound from "./pages/NotFound";
 
@@ -44,6 +45,8 @@ const App = () => (
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/battle" element={<BattlePage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/privacy" element={<LegalPage />} />
+          <Route path="/terms" element={<LegalPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
