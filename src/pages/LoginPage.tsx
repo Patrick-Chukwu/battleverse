@@ -166,8 +166,10 @@ const LoginPage = () => {
 
         {!configured && (
           <div className="mb-6 rounded-2xl bg-muted p-4 text-sm font-bold text-muted-foreground">
-            Auth is not configured on this deploy. Use Continue as guest, or add
-            VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (see docs/PHASE1.md).
+            Auth is not configured on this deploy. Guest play still works. On Vercel,
+            add <code className="text-foreground">VITE_SUPABASE_URL</code> and{" "}
+            <code className="text-foreground">VITE_SUPABASE_ANON_KEY</code>, then Redeploy
+            (Vite bakes keys at build time). See docs/PRODUCTION.md.
           </div>
         )}
 

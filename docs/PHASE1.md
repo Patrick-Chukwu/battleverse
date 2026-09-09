@@ -18,9 +18,14 @@ This Cloud Agent cannot log into your Supabase project (the Supabase MCP you add
 
 8. Left sidebar: **Authentication** → **Providers** → **Email**. Leave Email enabled.
 9. **Authentication** → **URL Configuration**:
-   - Site URL: `http://localhost:5173`
-   - Redirect URLs: add `http://localhost:5173` and `http://localhost:5173/login`  
-     (later add `https://thebattleverse.vercel.app/**` for production)
+   - Site URL: `https://thebattleverse.vercel.app` (production). Keep localhost only if you test magic links locally.
+   - Redirect URLs (add all of these):
+     - `http://localhost:5173`
+     - `http://localhost:5173/login`
+     - `https://thebattleverse.vercel.app`
+     - `https://thebattleverse.vercel.app/login`
+     - `https://thebattleverse.vercel.app/**`
+     - plus the same paths for any custom domain
 10. Optional but helpful for local testing: **Authentication** → **Providers** → Email → turn **Confirm email** off if codes/links are delayed. Keep it on for production.
 
 ### Email (default magic link for now)
