@@ -166,8 +166,8 @@ export function ChallengeSheet({ open, onOpenChange, subject, ageBand }: Challen
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
-        side="right"
-        className="w-full gap-0 overflow-y-auto border-l border-border/60 bg-background sm:max-w-md"
+        side="bottom"
+        className="max-h-[90dvh] w-full gap-0 overflow-y-auto rounded-t-3xl border-t border-border/60 bg-background pb-[env(safe-area-inset-bottom,0px)] sm:max-w-none"
       >
         <SheetHeader className="p-6 pb-2">
           <SheetTitle className="text-2xl font-black tracking-tight">Challenge a rival</SheetTitle>
@@ -208,26 +208,28 @@ export function ChallengeSheet({ open, onOpenChange, subject, ageBand }: Challen
               </Button>
             </div>
             {result?.found && result.id && result.username && (
-              <div className="glass-card flex items-center gap-3 rounded-3xl border border-border/60 p-4">
-                <span className="text-3xl">{result.avatar}</span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-black">{result.username}</p>
-                  <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                    <span
-                      className={cn(
-                        "inline-block h-2 w-2 rounded-full",
-                        PRESENCE_DOT[result.presence ?? "offline"]
-                      )}
-                    />
-                    {result.presence ?? "offline"}
-                  </p>
+              <div className="glass-card flex flex-col gap-3 rounded-3xl border border-border/60 p-4 sm:flex-row sm:items-center">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="text-3xl">{result.avatar}</span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-black">{result.username}</p>
+                    <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                      <span
+                        className={cn(
+                          "inline-block h-2 w-2 rounded-full",
+                          PRESENCE_DOT[result.presence ?? "offline"]
+                        )}
+                      />
+                      {result.presence ?? "offline"}
+                    </p>
+                  </div>
                 </div>
                 <Button
                   type="button"
                   variant="cta"
                   disabled={busy !== null}
                   onClick={() => void sendTo(result.id as string, result.username as string)}
-                  className="h-11 rounded-2xl px-4 text-sm"
+                  className="h-11 w-full rounded-2xl px-4 text-sm sm:w-auto"
                 >
                   <Swords className="mr-2 h-4 w-4" />
                   Challenge

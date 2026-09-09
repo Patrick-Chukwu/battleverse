@@ -28,13 +28,13 @@ const SubjectsPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background px-4 pt-24 pb-16">
+    <div className="page-shell bg-background">
       <div className="mx-auto w-full max-w-[864px]">
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-12 text-center">
-          <h1 className="mb-2 text-4xl font-black tracking-tight">
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-8 text-center sm:mb-12">
+          <h1 className="text-title mb-2 font-black tracking-tight">
             Choose Your Subject 📚
           </h1>
-          <p className="text-xl font-bold text-muted-foreground">Pick a topic and test your knowledge</p>
+          <p className="text-base font-bold text-muted-foreground sm:text-xl">Pick a topic and test your knowledge</p>
           {syncedAt && (
             <p className="mt-2 text-sm font-bold text-muted-foreground">
               Question pack updated {new Date(syncedAt).toLocaleString()}
@@ -62,16 +62,16 @@ const SubjectsPage = () => {
               whileTap={{ scale: 0.98 }}
               onClick={() => navigate(`/quiz/${subject.id}`)}
               className={cn(
-                "glass-card group flex min-h-[246px] cursor-pointer items-center gap-8 rounded-3xl border-2 border-transparent p-8 text-left transition-all hover:game-shadow",
+                "glass-card group flex cursor-pointer items-start gap-4 rounded-3xl border-2 border-transparent p-5 text-left transition-all hover:game-shadow sm:min-h-[246px] sm:items-center sm:gap-8 sm:p-8",
                 subjectHover[subject.color]
               )}
             >
-              <div className="shrink-0 text-7xl transition-transform duration-300 group-hover:scale-110">
+              <div className="shrink-0 text-5xl transition-transform duration-300 group-hover:scale-110 sm:text-7xl">
                 {subject.emoji}
               </div>
-              <div className="flex-1">
-                <h2 className="mb-2 text-2xl font-black">{subject.name}</h2>
-                <p className="mb-6 font-medium leading-relaxed text-muted-foreground">{subject.description}</p>
+              <div className="min-w-0 flex-1">
+                <h2 className="mb-2 text-xl font-black sm:text-2xl">{subject.name}</h2>
+                <p className="mb-4 font-medium leading-relaxed text-muted-foreground sm:mb-6">{subject.description}</p>
                 <div className="flex items-center gap-2 text-sm font-black text-primary transition-opacity">
                   Start Quiz <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>

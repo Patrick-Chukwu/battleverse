@@ -111,7 +111,7 @@ export function QuestionEditor({ open, draft, busy, onOpenChange, onSave }: Ques
                 Option {String.fromCharCode(65 + i)}
                 {form.correct_index === i ? " · correct" : ""}
               </Label>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row">
                 <Input
                   value={opt}
                   onChange={(e) => {
@@ -125,7 +125,7 @@ export function QuestionEditor({ open, draft, busy, onOpenChange, onSave }: Ques
                   type="button"
                   variant={form.correct_index === i ? "default" : "outline"}
                   onClick={() => setForm({ ...form, correct_index: i })}
-                  className="rounded-2xl"
+                  className="h-11 rounded-2xl sm:w-auto"
                 >
                   Correct
                 </Button>

@@ -29,7 +29,7 @@ export function OfflineBanner() {
   };
 
   return (
-    <div className="fixed top-[66px] right-0 left-0 z-40 border-b border-border bg-card/95 px-4 py-2 text-center text-sm font-bold shadow-sm backdrop-blur">
+    <div className="fixed top-[var(--nav-h)] right-0 left-0 z-40 border-b border-border bg-card/95 px-4 py-2 text-center text-xs font-bold shadow-sm backdrop-blur sm:text-sm">
       {!online ? (
         <span>You are offline. Practice and cached exam papers still work. Challenges need a connection or will queue.</span>
       ) : (

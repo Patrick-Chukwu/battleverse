@@ -70,11 +70,11 @@ const LeaderboardPage = () => {
   const stale = serverOn && !online && Boolean(query.data);
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-16">
-      <div className="container mx-auto max-w-3xl px-4">
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-16 text-center">
-          <h1 className="mb-2 text-4xl font-black tracking-tight">Leaderboard 🏆</h1>
-          <p className="text-xl font-bold text-muted-foreground">
+    <div className="page-shell bg-background">
+      <div className="mx-auto max-w-3xl">
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-8 text-center sm:mb-16">
+          <h1 className="text-title mb-2 font-black tracking-tight">Leaderboard 🏆</h1>
+          <p className="text-base font-bold text-muted-foreground sm:text-xl">
             {serverOn ? "Top players by server XP" : "Top players this week"}
           </p>
           {stale && (
@@ -105,7 +105,7 @@ const LeaderboardPage = () => {
 
         {allPlayers.length > 0 && (
           <>
-            <div className="mb-16 flex items-end justify-center gap-4 sm:gap-8">
+            <div className="mb-8 flex items-end justify-center gap-2 sm:mb-16 sm:gap-8">
               {top3.map((player, idx) => {
                 if (!player) return null;
                 const rank = idx === 1 ? 0 : idx === 0 ? 1 : 2;
@@ -114,26 +114,26 @@ const LeaderboardPage = () => {
                 return (
                   <motion.div
                     key={player.id}
-                    initial={{ y: 30, opacity: 0 }}
+                    initial={{ y: 24, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: rank * 0.15, type: "spring", bounce: 0.5 }}
-                    className="max-w-[180px] flex-1 text-center"
+                    transition={{ delay: rank * 0.1, type: "spring", bounce: 0.35 }}
+                    className="min-w-0 max-w-[180px] flex-1 text-center"
                   >
                     <div className={cn(
-                      "glass-card relative rounded-3xl p-6 transition-all",
-                      isFirst && "scale-110 -translate-y-4 border border-primary/20",
-                      player.isYou && "ring-4 ring-primary ring-offset-4 ring-offset-background"
+                      "glass-card relative rounded-2xl p-3 transition-all sm:rounded-3xl sm:p-6",
+                      isFirst && "border border-primary/20 sm:scale-110 sm:-translate-y-4",
+                      player.isYou && "ring-2 ring-primary ring-offset-2 ring-offset-background sm:ring-4 sm:ring-offset-4"
                     )}>
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-2xl">
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-lg sm:-top-4 sm:text-2xl">
                         {podiumEmoji[rank]}
                       </div>
-                      <span className={cn("mb-3 block", isFirst ? "text-6xl" : "text-5xl")}>
+                      <span className={cn("mb-2 block sm:mb-3", isFirst ? "text-4xl sm:text-6xl" : "text-3xl sm:text-5xl")}>
                         {player.avatar}
                       </span>
-                      <p className="mb-1 truncate font-black">
+                      <p className="mb-1 truncate text-xs font-black sm:text-base">
                         {player.username}{player.isYou ? " (You)" : ""}
                       </p>
-                      <p className="text-lg font-black text-primary">
+                      <p className="text-sm font-black text-primary sm:text-lg">
                         {player.xp} XP
                       </p>
                     </div>
@@ -142,28 +142,28 @@ const LeaderboardPage = () => {
               })}
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {allPlayers.slice(3).map((player) => (
                 <motion.div
                   key={player.id}
-                  initial={{ x: -20, opacity: 0 }}
+                  initial={{ x: -12, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   className={cn(
-                    "glass-card flex items-center gap-6 rounded-3xl p-6 transition-all hover:shadow-game",
+                    "glass-card flex items-center gap-3 rounded-2xl p-3 transition-all hover:shadow-game sm:gap-6 sm:rounded-3xl sm:p-6",
                     player.isYou && "ring-2 ring-primary bg-primary/5"
                   )}
                 >
-                  <span className="w-8 text-2xl font-black text-muted-foreground">{player.rank}</span>
-                  <span className="text-4xl">{player.avatar}</span>
+                  <span className="w-6 text-lg font-black text-muted-foreground sm:w-8 sm:text-2xl">{player.rank}</span>
+                  <span className="text-2xl sm:text-4xl">{player.avatar}</span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xl font-black">
+                    <p className="truncate text-base font-black sm:text-xl">
                       {player.username}{player.isYou ? " (You)" : ""}
                     </p>
-                    <p className="mt-1 text-sm font-bold text-muted-foreground">
+                    <p className="mt-0.5 text-xs font-bold text-muted-foreground sm:mt-1 sm:text-sm">
                       Level {player.level}
                     </p>
                   </div>
-                  <span className="text-2xl font-black text-primary">{player.xp} XP</span>
+                  <span className="shrink-0 text-base font-black text-primary sm:text-2xl">{player.xp} XP</span>
                 </motion.div>
               ))}
             </div>

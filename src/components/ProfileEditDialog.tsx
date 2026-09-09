@@ -93,7 +93,7 @@ export function ProfileEditDialog({ open, onOpenChange }: ProfileEditDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpen}>
-      <DialogContent className="max-w-md rounded-3xl p-6 sm:max-w-md" showCloseButton>
+      <DialogContent className="max-h-[min(90dvh,40rem)] max-w-md overflow-y-auto rounded-3xl p-5 sm:max-w-md sm:p-6" showCloseButton>
         <DialogHeader>
           <DialogTitle className="text-2xl font-black">Edit profile</DialogTitle>
           <DialogDescription className="font-bold">
