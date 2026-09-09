@@ -9,6 +9,7 @@ interface ImportMetaEnv {
   readonly VITE_USE_LIVE_BATTLE: string;
   readonly VITE_USE_INVITES: string;
   readonly VITE_USE_EXAM_MODES: string;
+  readonly VITE_USE_SERVER_LEADERBOARD: string;
 }
 
 interface ImportMeta {

@@ -35,3 +35,9 @@ export function isExamModesEnabled(): boolean {
   if (!isSupabaseConfigured()) return false;
   return import.meta.env.VITE_USE_EXAM_MODES !== "false";
 }
+
+/** Server-backed global leaderboard. Default on when Supabase is configured. */
+export function isServerLeaderboardEnabled(): boolean {
+  if (!isSupabaseConfigured()) return false;
+  return import.meta.env.VITE_USE_SERVER_LEADERBOARD !== "false";
+}
