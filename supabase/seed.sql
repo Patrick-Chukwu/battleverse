@@ -164,6 +164,111 @@ FROM jsonb_array_elements($seed$
     "ageGroup": "13-16"
   },
   {
+    "id": "t9",
+    "question": "Which device is used to click and point on a computer?",
+    "options": [
+      "Keyboard",
+      "Mouse",
+      "Speaker",
+      "Printer"
+    ],
+    "correctIndex": 1,
+    "explanation": "A mouse lets you point and click. Trackpads do a similar job on laptops.",
+    "subject": "tech",
+    "difficulty": "easy",
+    "ageGroup": "6-8"
+  },
+  {
+    "id": "t10",
+    "question": "What does URL stand for?",
+    "options": [
+      "Uniform Resource Locator",
+      "Universal Remote Link",
+      "User Random List",
+      "United Router Line"
+    ],
+    "correctIndex": 0,
+    "explanation": "A URL is the address of a page on the web, like a house address for a website.",
+    "subject": "tech",
+    "difficulty": "medium",
+    "ageGroup": "9-12"
+  },
+  {
+    "id": "t11",
+    "question": "Which of these is a web browser?",
+    "options": [
+      "Excel",
+      "Chrome",
+      "Photoshop",
+      "Minecraft"
+    ],
+    "correctIndex": 1,
+    "explanation": "Chrome, Firefox, Safari, and Edge are browsers — apps that open websites.",
+    "subject": "tech",
+    "difficulty": "medium",
+    "ageGroup": "9-12"
+  },
+  {
+    "id": "t12",
+    "question": "What does HTTPS add compared with HTTP?",
+    "options": [
+      "Faster videos",
+      "Encrypted connection",
+      "Free storage",
+      "Dark mode"
+    ],
+    "correctIndex": 1,
+    "explanation": "The S in HTTPS means the connection is encrypted, which helps keep passwords and data private.",
+    "subject": "tech",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "t13",
+    "question": "In programming, what is a variable?",
+    "options": [
+      "A forever-fixed number",
+      "A named container for a value",
+      "A type of virus",
+      "The computer's fan"
+    ],
+    "correctIndex": 1,
+    "explanation": "A variable stores a value you can use and change later, like a labelled box.",
+    "subject": "tech",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "t14",
+    "question": "What is an IP address used for?",
+    "options": [
+      "Colouring a photo",
+      "Identifying a device on a network",
+      "Charging a battery",
+      "Printing a page"
+    ],
+    "correctIndex": 1,
+    "explanation": "An IP address is a numeric label so devices can find each other on a network.",
+    "subject": "tech",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "t15",
+    "question": "Which statement about open-source software is true?",
+    "options": [
+      "Nobody may read the code",
+      "The source code can be inspected and shared",
+      "It never has bugs",
+      "It only runs offline"
+    ],
+    "correctIndex": 1,
+    "explanation": "Open-source projects publish their source code so others can study, use, and improve it.",
+    "subject": "tech",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
     "id": "a1",
     "question": "Which of these is an example of AI?",
     "options": [
@@ -249,6 +354,141 @@ FROM jsonb_array_elements($seed$
     ],
     "correctIndex": 1,
     "explanation": "Machine learning is when AI systems learn patterns from data to make predictions!",
+    "subject": "ai",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "a7",
+    "question": "Which of these can a simple robot do?",
+    "options": [
+      "Feel hungry",
+      "Follow programmed steps",
+      "Dream at night",
+      "Grow taller"
+    ],
+    "correctIndex": 1,
+    "explanation": "Robots follow instructions people (or programs) give them. They do not have human feelings.",
+    "subject": "ai",
+    "difficulty": "easy",
+    "ageGroup": "6-8"
+  },
+  {
+    "id": "a8",
+    "question": "What is a good use of AI at home?",
+    "options": [
+      "Guessing your secrets",
+      "Suggesting a playlist you might like",
+      "Locking you out of apps",
+      "Eating your snacks"
+    ],
+    "correctIndex": 1,
+    "explanation": "Recommenders can suggest music or videos from patterns — still check they feel right for you.",
+    "subject": "ai",
+    "difficulty": "easy",
+    "ageGroup": "6-8"
+  },
+  {
+    "id": "a9",
+    "question": "What is a dataset in machine learning?",
+    "options": [
+      "A collection of examples used for training",
+      "A single password",
+      "A type of robot joint",
+      "The Wi-Fi password"
+    ],
+    "correctIndex": 0,
+    "explanation": "Models learn from many examples (a dataset). Better, fairer data usually means better results.",
+    "subject": "ai",
+    "difficulty": "medium",
+    "ageGroup": "9-12"
+  },
+  {
+    "id": "a10",
+    "question": "Why might an AI chatbot give a wrong answer?",
+    "options": [
+      "It is always joking",
+      "It predicts likely text, and can be incorrect",
+      "The sun is too bright",
+      "Robots cannot use language"
+    ],
+    "correctIndex": 1,
+    "explanation": "Language models guess likely next words. They can sound confident and still be wrong — always check facts.",
+    "subject": "ai",
+    "difficulty": "medium",
+    "ageGroup": "9-12"
+  },
+  {
+    "id": "a11",
+    "question": "What is a neural network inspired by?",
+    "options": [
+      "Ocean waves",
+      "Networks of brain cells",
+      "Train timetables",
+      "Paper airplanes"
+    ],
+    "correctIndex": 1,
+    "explanation": "Artificial neural networks are loosely inspired by how neurons connect, but they are math on computers, not brains.",
+    "subject": "ai",
+    "difficulty": "medium",
+    "ageGroup": "9-12"
+  },
+  {
+    "id": "a12",
+    "question": "What does 'training' a model mean?",
+    "options": [
+      "Giving it gym exercises",
+      "Adjusting its parameters using examples",
+      "Deleting all data",
+      "Turning the computer off"
+    ],
+    "correctIndex": 1,
+    "explanation": "Training updates the model's internal numbers so its predictions better match the examples.",
+    "subject": "ai",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "a13",
+    "question": "What is overfitting?",
+    "options": [
+      "The model memorizes training data and fails on new cases",
+      "The computer overheats",
+      "Too many users online",
+      "A cable that is too short"
+    ],
+    "correctIndex": 0,
+    "explanation": "An overfit model looks great on data it has seen and weak on new data — like memorizing answers without understanding.",
+    "subject": "ai",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "a14",
+    "question": "Why can AI systems be biased?",
+    "options": [
+      "Computers have favourite colours",
+      "Training data and design choices can encode unfair patterns",
+      "Bias only exists in printers",
+      "They refuse to use numbers"
+    ],
+    "correctIndex": 1,
+    "explanation": "If data or labels treat groups unfairly, models can copy that. Careful data and testing help reduce harm.",
+    "subject": "ai",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "a15",
+    "question": "What is a prompt in generative AI?",
+    "options": [
+      "The instruction or question you give the model",
+      "A type of battery",
+      "The model's cooling fan",
+      "A printed coupon"
+    ],
+    "correctIndex": 0,
+    "explanation": "A prompt is the input text (or other signal) that steers what a generative model produces.",
     "subject": "ai",
     "difficulty": "hard",
     "ageGroup": "13-16"
@@ -374,6 +614,111 @@ FROM jsonb_array_elements($seed$
     "ageGroup": "9-12"
   },
   {
+    "id": "m9",
+    "question": "What is 9 + 8?",
+    "options": [
+      "16",
+      "17",
+      "18",
+      "19"
+    ],
+    "correctIndex": 1,
+    "explanation": "9 + 8 = 17. You can think of 10 + 8 = 18, then subtract 1.",
+    "subject": "math",
+    "difficulty": "easy",
+    "ageGroup": "6-8"
+  },
+  {
+    "id": "m10",
+    "question": "How many sides does a square have?",
+    "options": [
+      "3",
+      "4",
+      "5",
+      "8"
+    ],
+    "correctIndex": 1,
+    "explanation": "A square has 4 equal sides and 4 right angles.",
+    "subject": "math",
+    "difficulty": "easy",
+    "ageGroup": "6-8"
+  },
+  {
+    "id": "m11",
+    "question": "What is 7 × 8?",
+    "options": [
+      "54",
+      "56",
+      "63",
+      "48"
+    ],
+    "correctIndex": 1,
+    "explanation": "7 × 8 = 56. A handy pair: 7 × 8 and 8 × 7 are the same.",
+    "subject": "math",
+    "difficulty": "medium",
+    "ageGroup": "9-12"
+  },
+  {
+    "id": "m12",
+    "question": "Solve for x: 2x + 6 = 20",
+    "options": [
+      "5",
+      "7",
+      "8",
+      "14"
+    ],
+    "correctIndex": 1,
+    "explanation": "Subtract 6: 2x = 14, then divide by 2: x = 7.",
+    "subject": "math",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "m13",
+    "question": "What is the value of π (pi) approximately?",
+    "options": [
+      "2.14",
+      "3.14",
+      "4.14",
+      "1.41"
+    ],
+    "correctIndex": 1,
+    "explanation": "Pi is about 3.14159… — the ratio of a circle's circumference to its diameter.",
+    "subject": "math",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "m14",
+    "question": "If a fair coin is flipped, P(heads) is?",
+    "options": [
+      "0",
+      "1/4",
+      "1/2",
+      "2"
+    ],
+    "correctIndex": 2,
+    "explanation": "Two equally likely outcomes, heads or tails, so probability of heads is 1/2.",
+    "subject": "math",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "m15",
+    "question": "The slope of the line y = 3x − 2 is?",
+    "options": [
+      "−2",
+      "3",
+      "1/3",
+      "2"
+    ],
+    "correctIndex": 1,
+    "explanation": "In y = mx + b, m is the slope. Here m = 3.",
+    "subject": "math",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
     "id": "g1",
     "question": "What should you do if a stranger messages you online?",
     "options": [
@@ -489,6 +834,111 @@ FROM jsonb_array_elements($seed$
     ],
     "correctIndex": 1,
     "explanation": "Adults have 206 bones. Babies actually have more — about 270!",
+    "subject": "general",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "g9",
+    "question": "What do we call frozen water?",
+    "options": [
+      "Steam",
+      "Ice",
+      "Juice",
+      "Oil"
+    ],
+    "correctIndex": 1,
+    "explanation": "When water freezes it becomes ice. Heat it and it can become steam.",
+    "subject": "general",
+    "difficulty": "easy",
+    "ageGroup": "6-8"
+  },
+  {
+    "id": "g10",
+    "question": "Which organ pumps blood around the body?",
+    "options": [
+      "Lungs",
+      "Heart",
+      "Stomach",
+      "Skin"
+    ],
+    "correctIndex": 1,
+    "explanation": "The heart is a muscle that pumps blood through your blood vessels.",
+    "subject": "general",
+    "difficulty": "medium",
+    "ageGroup": "9-12"
+  },
+  {
+    "id": "g11",
+    "question": "What is the smallest planet in our solar system?",
+    "options": [
+      "Earth",
+      "Mercury",
+      "Jupiter",
+      "Neptune"
+    ],
+    "correctIndex": 1,
+    "explanation": "Mercury is the smallest planet and the closest to the Sun.",
+    "subject": "general",
+    "difficulty": "medium",
+    "ageGroup": "9-12"
+  },
+  {
+    "id": "g12",
+    "question": "Photosynthesis mainly happens in which plant part?",
+    "options": [
+      "Roots",
+      "Leaves",
+      "Flowers only",
+      "Seeds only"
+    ],
+    "correctIndex": 1,
+    "explanation": "Leaves contain chlorophyll, which captures light energy to make food.",
+    "subject": "general",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "g13",
+    "question": "What is the main gas in Earth's atmosphere?",
+    "options": [
+      "Oxygen",
+      "Nitrogen",
+      "Carbon dioxide",
+      "Hydrogen"
+    ],
+    "correctIndex": 1,
+    "explanation": "About 78% of the air we breathe is nitrogen; oxygen is about 21%.",
+    "subject": "general",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "g14",
+    "question": "DNA is best described as?",
+    "options": [
+      "A vitamin",
+      "The molecule that carries genetic instructions",
+      "A type of bone",
+      "A planet"
+    ],
+    "correctIndex": 1,
+    "explanation": "DNA stores the instructions living things use to grow and function.",
+    "subject": "general",
+    "difficulty": "hard",
+    "ageGroup": "13-16"
+  },
+  {
+    "id": "g15",
+    "question": "Which process do cells use to release energy from food with oxygen?",
+    "options": [
+      "Photosynthesis",
+      "Aerobic respiration",
+      "Evaporation",
+      "Magnetism"
+    ],
+    "correctIndex": 1,
+    "explanation": "Aerobic respiration uses oxygen to release energy from glucose.",
     "subject": "general",
     "difficulty": "hard",
     "ageGroup": "13-16"

@@ -275,7 +275,7 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, extensions
 AS $$
 DECLARE
   base text;
@@ -299,10 +299,11 @@ BEGIN
     uname,
     '🦊',
     CASE
-      WHEN NEW.email IS NOT NULL THEN encode(digest(lower(NEW.email), 'sha256'), 'hex')
+      WHEN NEW.email IS NOT NULL THEN encode(extensions.digest(lower(NEW.email)::bytea, 'sha256'), 'hex')
       ELSE NULL
     END
-  );
+  )
+  ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
 $$;
