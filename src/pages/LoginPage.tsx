@@ -152,11 +152,11 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background px-4 pt-24 pb-16">
+    <div className="page-shell bg-background">
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="glass-card mx-auto max-w-md rounded-3xl p-8 sm:p-10"
+        className="glass-card mx-auto max-w-md rounded-3xl p-5 sm:p-10"
       >
         <p className="mb-2 text-center text-5xl">🎮</p>
         <h1 className="mb-2 text-center text-3xl font-black">Sign in</h1>
@@ -256,11 +256,11 @@ const LoginPage = () => {
               Open the email sent to {email} and tap the sign-in link (keep this
               tab open). If the email has a 6-digit code instead, type it here.
             </p>
-            <div className="flex justify-center">
+            <div className="flex justify-center overflow-x-auto">
               <InputOTP maxLength={6} value={otp} onChange={setOtp}>
                 <InputOTPGroup>
                   {Array.from({ length: 6 }, (_, i) => (
-                    <InputOTPSlot key={i} index={i} className="size-10 text-lg font-black" />
+                    <InputOTPSlot key={i} index={i} className="size-9 text-base font-black sm:size-10 sm:text-lg" />
                   ))}
                 </InputOTPGroup>
               </InputOTP>

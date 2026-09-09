@@ -122,30 +122,30 @@ const BattlePage = () => {
   // State A0: Waiting on a directed challenge
   if (battle.isWaitingInvite && !battle.isPlaying && !battle.isFinished) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#050505] p-6 text-white">
+      <div className="page-offset flex flex-col items-center justify-center overflow-hidden bg-[#050505] px-4 py-8 text-white">
         <BackgroundDecorator />
-        <motion.div className="relative flex aspect-square w-full max-w-md items-center justify-center">
+        <motion.div className="relative flex w-full max-w-md items-center justify-center py-8 sm:aspect-square">
           {[1, 1.5, 2].map((scale, i) => (
             <motion.div
               key={i}
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: scale * 2, opacity: [0, 0.2, 0] }}
               transition={{ repeat: Infinity, duration: 3, delay: i * 0.5 }}
-              className="absolute inset-0 rounded-full border-2 border-white/20"
+              className="absolute inset-0 hidden rounded-full border-2 border-white/20 sm:block"
             />
           ))}
-          <div className="z-10 flex items-center gap-12">
-            <div className="flex h-32 w-32 items-center justify-center rounded-[2.5rem] border border-white/20 bg-white/10 text-6xl shadow-2xl backdrop-blur-2xl">
+          <div className="z-10 flex items-center gap-4 sm:gap-12">
+            <div className="flex h-20 w-20 items-center justify-center rounded-[1.75rem] border border-white/20 bg-white/10 text-4xl shadow-2xl backdrop-blur-2xl sm:h-32 sm:w-32 sm:rounded-[2.5rem] sm:text-6xl">
               {profile.avatar}
             </div>
-            <div className="text-4xl font-black italic tracking-tighter text-white/40">VS</div>
-            <div className="flex h-32 w-32 items-center justify-center rounded-[2.5rem] border border-dashed border-white/10 bg-white/5 text-6xl shadow-2xl backdrop-blur-xl">
+            <div className="text-2xl font-black italic tracking-tighter text-white/40 sm:text-4xl">VS</div>
+            <div className="flex h-20 w-20 items-center justify-center rounded-[1.75rem] border border-dashed border-white/10 bg-white/5 text-4xl shadow-2xl backdrop-blur-xl sm:h-32 sm:w-32 sm:rounded-[2.5rem] sm:text-6xl">
               🎯
             </div>
           </div>
         </motion.div>
-        <div className="mt-12 text-center">
-          <h2 className="mb-2 text-3xl font-black tracking-tight">
+        <div className="mt-8 text-center sm:mt-12">
+          <h2 className="text-title mb-2 font-black tracking-tight">
             {battle.inviteLabel ?? "WAITING FOR YOUR RIVAL"}
           </h2>
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-white/40">
@@ -181,35 +181,35 @@ const BattlePage = () => {
   // State A: Setup Menu
   if (!battle.isPlaying && !battle.isSearching && !battle.isFinished) {
     return (
-      <div className="relative min-h-screen overflow-hidden bg-background pt-28 pb-20">
+      <div className="page-shell relative overflow-hidden bg-background">
         <BackgroundDecorator />
-        <div className="container mx-auto px-6 max-w-3xl">
+        <div className="mx-auto max-w-3xl">
           <motion.div 
             initial="hidden"
             animate="visible"
             variants={containerVariants}
-            className="text-center mb-12"
+            className="mb-8 text-center sm:mb-12"
           >
             <motion.div 
               whileHover={{ rotate: 10, scale: 1.1 }}
-              className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-3xl border border-border/50 bg-card shadow-game"
+              className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-3xl border border-border/50 bg-card shadow-game sm:mb-6 sm:h-20 sm:w-20"
             >
-              <Swords className="w-10 h-10 text-primary" />
+              <Swords className="h-8 w-8 text-primary sm:h-10 sm:w-10" />
             </motion.div>
-            <h1 className="mb-4 text-5xl font-black tracking-tight text-primary">
+            <h1 className="text-title mb-3 font-black tracking-tight text-primary">
               Arena Setup
             </h1>
-            <p className="text-lg font-semibold text-muted-foreground">Configure your legendary duel</p>
+            <p className="text-base font-semibold text-muted-foreground sm:text-lg">Configure your legendary duel</p>
           </motion.div>
 
-          <div className="space-y-12">
+          <div className="space-y-8 sm:space-y-12">
             {/* Subject Selection - Asymmetric Grid */}
             <section>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-1.5 h-8 bg-game-blue rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
-                <h2 className="text-2xl font-black tracking-tight">Choose Subject</h2>
+              <div className="mb-4 flex items-center gap-3 sm:mb-6">
+                <div className="h-8 w-1.5 rounded-full bg-game-blue shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
+                <h2 className="text-xl font-black tracking-tight sm:text-2xl">Choose Subject</h2>
               </div>
-              <div className="grid grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-6 md:gap-4">
                 {subjects.map((s, idx) => (
                   <motion.button
                     key={s.id}
@@ -217,17 +217,17 @@ const BattlePage = () => {
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedSubject(s.id)}
                     className={cn(
-                      "glass-card relative group overflow-hidden rounded-3xl border-2 p-6 transition-all",
-                      idx === 0 || idx === 3 ? "col-span-4" : "col-span-2",
+                      "glass-card relative group overflow-hidden rounded-3xl border-2 p-4 transition-all sm:p-6",
+                      idx === 0 || idx === 3 ? "col-span-1 md:col-span-4" : "col-span-1 md:col-span-2",
                       selectedSubject === s.id
                         ? "border-primary shadow-game"
                         : "border-transparent hover:border-primary/20"
                     )}
                   >
-                    <div className="flex items-center gap-4 relative z-10">
-                      <span className="text-4xl filter drop-shadow-md">{s.emoji}</span>
-                      <div className="text-left">
-                        <span className="font-black text-xl block leading-none mb-1">{s.name}</span>
+                    <div className="relative z-10 flex items-center gap-3 sm:gap-4">
+                      <span className="text-3xl filter drop-shadow-md sm:text-4xl">{s.emoji}</span>
+                      <div className="min-w-0 text-left">
+                        <span className="mb-1 block truncate text-base font-black leading-none sm:text-xl">{s.name}</span>
                         <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-60">
                           {s.id === "ai" ? "FutureTech" : s.id === "tech" ? "Digital" : "Fundamentals"}
                         </span>
@@ -246,11 +246,11 @@ const BattlePage = () => {
 
             {/* Age Selection - Premium Segmented Control */}
             <section>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-1.5 h-8 bg-game-purple rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)]" />
-                <h2 className="text-2xl font-black tracking-tight">Age Bracket</h2>
+              <div className="mb-4 flex items-center gap-3 sm:mb-6">
+                <div className="h-8 w-1.5 rounded-full bg-game-purple shadow-[0_0_15px_rgba(168,85,247,0.5)]" />
+                <h2 className="text-xl font-black tracking-tight sm:text-2xl">Age Bracket</h2>
               </div>
-              <div className="flex gap-4">
+              <div className="grid grid-cols-3 gap-2 sm:flex sm:gap-4">
                 {AGE_GROUPS.map((age) => (
                   <motion.button
                     key={age.id}
@@ -258,14 +258,14 @@ const BattlePage = () => {
                     whileTap={{ scale: 0.97 }}
                     onClick={() => setSelectedAge(age.id)}
                     className={cn(
-                      "glass-card flex flex-1 flex-col items-center rounded-3xl border-2 p-5 transition-all",
+                      "glass-card flex min-w-0 flex-1 flex-col items-center rounded-2xl border-2 p-3 transition-all sm:rounded-3xl sm:p-5",
                       selectedAge === age.id
                         ? "border-primary shadow-game"
                         : "border-transparent text-muted-foreground opacity-70 hover:border-primary/20 hover:opacity-100"
                     )}
                   >
-                    <span className="text-3xl mb-2">{age.icon}</span>
-                    <span className="font-black text-lg">{age.label}</span>
+                    <span className="mb-1 text-2xl sm:mb-2 sm:text-3xl">{age.icon}</span>
+                    <span className="text-sm font-black sm:text-lg">{age.label}</span>
                     <span className="text-[10px] font-black uppercase tracking-widest opacity-50">{age.sub}</span>
                   </motion.button>
                 ))}
@@ -349,11 +349,11 @@ const BattlePage = () => {
   // State B: Matchmaking
   if (battle.isSearching) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#050505] text-white p-6 overflow-hidden">
+      <div className="page-offset flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-[#050505] px-4 py-8 text-white">
         <BackgroundDecorator />
         
         <motion.div 
-          className="relative w-full max-w-md aspect-square flex items-center justify-center"
+          className="relative flex w-full max-w-md items-center justify-center py-8 sm:aspect-square"
         >
           {/* Circular Pulse Effects */}
           {[1, 1.5, 2].map((scale, i) => (
@@ -366,13 +366,13 @@ const BattlePage = () => {
             />
           ))}
 
-          <div className="flex items-center gap-12 z-10">
+          <div className="z-10 flex items-center gap-4 sm:gap-12">
             <motion.div
-              initial={{ x: -100, opacity: 0 }}
+              initial={{ x: -40, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               className="relative"
             >
-              <div className="w-32 h-32 rounded-[2.5rem] bg-white/10 backdrop-blur-2xl flex items-center justify-center text-6xl shadow-2xl border border-white/20">
+              <div className="flex h-20 w-20 items-center justify-center rounded-[1.75rem] border border-white/20 bg-white/10 text-4xl shadow-2xl backdrop-blur-2xl sm:h-32 sm:w-32 sm:rounded-[2.5rem] sm:text-6xl">
                 {profile.avatar}
               </div>
               <motion.div 
@@ -387,15 +387,15 @@ const BattlePage = () => {
             <motion.div
               animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
               transition={{ repeat: Infinity, duration: 1.5 }}
-              className="text-4xl font-black italic text-white/40 tracking-tighter"
+              className="text-2xl font-black italic tracking-tighter text-white/40 sm:text-4xl"
             >
               VS
             </motion.div>
 
             <motion.div
-              initial={{ x: 100, opacity: 0 }}
+              initial={{ x: 40, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              className="w-32 h-32 rounded-[2.5rem] bg-white/5 backdrop-blur-xl flex items-center justify-center text-6xl shadow-2xl border border-white/10 border-dashed"
+              className="flex h-20 w-20 items-center justify-center rounded-[1.75rem] border border-dashed border-white/10 bg-white/5 text-4xl shadow-2xl backdrop-blur-xl sm:h-32 sm:w-32 sm:rounded-[2.5rem] sm:text-6xl"
             >
               <motion.span
                 animate={{ opacity: [0.3, 1, 0.3] }}
@@ -407,10 +407,10 @@ const BattlePage = () => {
           </div>
         </motion.div>
 
-        <div className="text-center mt-12">
+        <div className="mt-8 text-center sm:mt-12">
           <motion.h2 
             animate={{ opacity: [0.5, 1, 0.5] }}
-            className="text-3xl font-black mb-2 tracking-tight"
+            className="text-title mb-2 font-black tracking-tight"
           >
             SCANNING FOR RIVALS
           </motion.h2>
@@ -439,9 +439,9 @@ const BattlePage = () => {
     const playerRank = allParticipants.findIndex(p => p.isPlayer) + 1;
 
     return (
-      <div className="min-h-screen bg-background pt-28 pb-20">
+      <div className="page-shell bg-background">
         <BackgroundDecorator />
-        <div className="container mx-auto px-6 max-w-xl">
+        <div className="mx-auto max-w-xl">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -455,7 +455,7 @@ const BattlePage = () => {
                   rotate: [0, -5, 5, 0]
                 }}
                 transition={{ repeat: Infinity, duration: 4 }}
-                className="text-[10rem] leading-none mb-4 select-none"
+                className="mb-4 select-none text-7xl leading-none sm:text-[10rem]"
               >
                 {playerRank === 1 ? "🏆" : playerRank === 2 ? "🥈" : "🥉"}
               </motion.div>
@@ -469,7 +469,7 @@ const BattlePage = () => {
               </motion.div>
             </div>
 
-            <h1 className="text-5xl font-black tracking-tighter mb-4">
+            <h1 className="text-title mb-4 font-black tracking-tighter">
               {playerRank === 1 ? "ELITE CHAMPION" : playerRank === 2 ? "MASTER CLASS" : "VALIANT EFFORT"}
             </h1>
             <p className="text-muted-foreground font-black uppercase tracking-[0.4em] mb-12">
@@ -490,18 +490,18 @@ const BattlePage = () => {
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: 0.3 + (i * 0.1) }}
                     className={cn(
-                      "flex items-center gap-5 p-5 rounded-[2rem] transition-all",
+                      "flex items-center gap-3 rounded-[1.5rem] p-3 transition-all sm:gap-5 sm:rounded-[2rem] sm:p-5",
                       p.isPlayer 
-                        ? "bg-primary text-primary-foreground shadow-2xl scale-[1.03] z-10" 
+                        ? "z-10 scale-[1.02] bg-primary text-primary-foreground shadow-2xl" 
                         : "bg-white/50 dark:bg-black/20"
                     )}
                   >
-                    <div className="w-10 h-10 rounded-2xl bg-black/5 dark:bg-white/10 flex items-center justify-center font-black text-xl italic">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-black/5 text-lg font-black italic dark:bg-white/10 sm:h-10 sm:w-10 sm:text-xl">
                       {i + 1}
                     </div>
-                    <span className="text-4xl">{p.avatar}</span>
-                    <div className="text-left flex-1">
-                      <span className="font-black text-lg block leading-none mb-1 truncate">{p.name}</span>
+                    <span className="text-3xl sm:text-4xl">{p.avatar}</span>
+                    <div className="min-w-0 flex-1 text-left">
+                      <span className="mb-1 block truncate text-base font-black leading-none sm:text-lg">{p.name}</span>
                       <span className={cn("text-[10px] font-black uppercase tracking-widest opacity-50", p.isPlayer && "opacity-80")}>
                         {p.isPlayer ? "Your Profile" : "Arena Opponent"}
                       </span>
@@ -515,7 +515,7 @@ const BattlePage = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
               <Button
                 onClick={() => battle.resetBattle()}
                 variant="ctaSecondary"
@@ -553,9 +553,9 @@ const BattlePage = () => {
       : "from-rose-500 to-red-600";
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background pt-28 pb-16">
+    <div className="page-shell relative overflow-hidden bg-background">
       <BackgroundDecorator />
-      <div className="container mx-auto px-6 max-w-2xl relative z-10">
+      <div className="relative z-10 mx-auto max-w-2xl">
         <LayoutGroup>
           {battle.reconnectSeconds !== null && battle.reconnectSeconds > 0 && (
             <p className="mb-4 text-center text-sm font-black uppercase tracking-widest text-amber-600">
@@ -565,12 +565,12 @@ const BattlePage = () => {
           {/* Header Scoreboard - Floating Glass */}
           <motion.div 
             layout
-            className="glass-card mb-10 flex items-center justify-between rounded-3xl p-6"
+            className="glass-card mb-5 flex items-center justify-between gap-3 rounded-3xl p-3 sm:mb-10 sm:p-6"
           >
-            <div className="flex -space-x-4">
+            <div className="flex -space-x-3 sm:-space-x-4">
               <motion.div 
                 whileHover={{ y: -5 }}
-                className="w-16 h-16 rounded-[1.5rem] bg-primary shadow-2xl border-4 border-white dark:border-[#111] flex items-center justify-center text-3xl z-30 ring-8 ring-primary/5"
+                className="z-30 flex h-12 w-12 items-center justify-center rounded-[1.1rem] border-4 border-white bg-primary text-2xl shadow-2xl ring-4 ring-primary/5 dark:border-[#111] sm:h-16 sm:w-16 sm:rounded-[1.5rem] sm:text-3xl sm:ring-8"
               >
                 {profile.avatar}
               </motion.div>
@@ -579,7 +579,7 @@ const BattlePage = () => {
                   key={r.name} 
                   whileHover={{ y: -5 }}
                   className={cn(
-                    "w-16 h-16 rounded-[1.5rem] bg-white dark:bg-white/5 border-4 border-white dark:border-[#111] flex items-center justify-center text-3xl relative shadow-xl transition-all",
+                    "relative flex h-12 w-12 items-center justify-center rounded-[1.1rem] border-4 border-white bg-white text-2xl shadow-xl transition-all dark:border-[#111] dark:bg-white/5 sm:h-16 sm:w-16 sm:rounded-[1.5rem] sm:text-3xl",
                     i === 0 ? "z-20 -translate-x-2" : "z-10 -translate-x-4",
                     battle.hasAnswered && r.lastCorrect === false && "grayscale"
                   )}
@@ -603,8 +603,8 @@ const BattlePage = () => {
 
             <div className="text-right">
               <div className="flex items-center gap-2 justify-end mb-1">
-                <Trophy className="w-6 h-6 text-yellow-500 animate-bounce" />
-                <span className="font-black text-4xl tracking-tighter tabular-nums leading-none">{battle.score}</span>
+                <Trophy className="h-5 w-5 text-yellow-500 sm:h-6 sm:w-6" />
+                <span className="text-2xl font-black leading-none tracking-tighter tabular-nums sm:text-4xl">{battle.score}</span>
               </div>
               <div className="flex items-center justify-end gap-2">
                 <div className="h-1.5 w-12 bg-primary/10 rounded-full overflow-hidden">
@@ -628,16 +628,16 @@ const BattlePage = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
-            className="glass-card relative mb-8 overflow-hidden rounded-3xl p-10"
+            className="glass-card relative mb-5 overflow-hidden rounded-3xl p-5 sm:mb-8 sm:p-10"
           >
-            <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.07] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+            <div className="pointer-events-none absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-[0.07]" />
             
             <div className="relative z-10">
-              <h2 className="text-3xl font-black text-center mb-10 leading-tight tracking-tight px-4">
+              <h2 className="text-heading mb-6 px-1 text-center font-black leading-tight tracking-tight sm:mb-10 sm:px-4">
                 {currentQuestion.question}
               </h2>
 
-              <div className="grid gap-4">
+              <div className="grid gap-3 sm:gap-4">
                 {currentQuestion.options.map((option, idx) => {
                   const isSelected = battle.selectedAnswer === idx;
                   const isCorrect = idx === currentQuestion.correctIndex;
@@ -651,14 +651,14 @@ const BattlePage = () => {
                       disabled={showResult}
                       onClick={() => battle.submitAnswer(idx)}
                       className={cn(
-                        "w-full p-6 rounded-[2rem] font-black text-left transition-all border-2 flex justify-between items-center group relative overflow-hidden",
+                        "group relative flex w-full min-h-14 items-center justify-between overflow-hidden rounded-[1.5rem] border-2 p-4 text-left font-black transition-all sm:rounded-[2rem] sm:p-6",
                         !showResult && "bg-black/5 dark:bg-white/5 border-transparent hover:bg-black/10 dark:hover:bg-white/10",
                         showResult && isCorrect && "bg-game-green/10 border-game-green text-game-green shadow-[0_0_30px_rgba(34,197,94,0.1)]",
                         showResult && isSelected && !isCorrect && "bg-destructive/10 border-destructive text-destructive shadow-[0_0_30px_rgba(231,0,11,0.1)]",
                         showResult && !isSelected && !isCorrect && "opacity-30 border-transparent blur-[1px]"
                       )}
                     >
-                      <span className="text-lg tracking-tight relative z-10">{option}</span>
+                      <span className="relative z-10 min-w-0 text-base tracking-tight sm:text-lg">{option}</span>
                       <AnimatePresence>
                         {showResult && isCorrect && (
                           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="z-10 bg-game-green p-1.5 rounded-xl shadow-lg">
@@ -711,27 +711,28 @@ const BattlePage = () => {
                 <motion.div
                   initial={{ y: 50, opacity: 0, scale: 0.9 }}
                   animate={{ y: 0, opacity: 1, scale: 1 }}
-                  className="bg-primary p-1.5 rounded-[2.5rem] shadow-2xl flex items-center gap-4 group"
+                  className="group flex flex-col items-stretch gap-3 rounded-[1.75rem] bg-primary p-3 shadow-2xl sm:flex-row sm:items-center sm:gap-4 sm:rounded-[2.5rem] sm:p-1.5"
                 >
-                  <div className="w-16 h-16 rounded-[2rem] bg-white/10 backdrop-blur-md flex items-center justify-center text-primary-foreground shrink-0 ml-2">
-                    <Lightbulb className="w-8 h-8" />
+                  <div className="ml-1 hidden h-16 w-16 shrink-0 items-center justify-center rounded-[2rem] bg-white/10 text-primary-foreground backdrop-blur-md sm:ml-2 sm:flex">
+                    <Lightbulb className="h-8 w-8" />
                   </div>
-                  <div className="flex-1 py-4">
-                    <h4 className="font-black text-primary-foreground text-sm uppercase tracking-widest opacity-60 mb-1">Academy Insight</h4>
-                    <p className="text-primary-foreground text-sm font-bold leading-tight pr-6">
+                  <div className="min-w-0 flex-1 px-2 py-2 sm:py-4">
+                    <h4 className="mb-1 text-xs font-black tracking-widest text-primary-foreground uppercase opacity-60 sm:text-sm">Academy Insight</h4>
+                    <p className="text-sm font-bold leading-tight text-primary-foreground sm:pr-6">
                       {currentQuestion.explanation}
                     </p>
                   </div>
                   {battle.isLive ? (
-                    <div className="mr-4 pr-2 text-right text-xs font-black uppercase tracking-widest text-primary-foreground/80">
+                    <div className="px-2 pb-2 text-xs font-black tracking-widest text-primary-foreground/80 uppercase sm:mr-4 sm:pr-2 sm:pb-0 sm:text-right">
                       {battle.timer > 0 ? "Waiting for the round clock" : "Next round incoming"}
                     </div>
                   ) : (
                     <Button
                       onClick={() => battle.nextQuestion()}
-                      className="h-16 w-16 rounded-[2rem] bg-white text-primary hover:bg-white/90 shadow-xl group-hover:scale-105 transition-all p-0 mr-2"
+                      className="h-12 w-full rounded-2xl bg-white p-0 text-primary shadow-xl transition-all hover:bg-white/90 sm:mr-2 sm:h-16 sm:w-16 sm:rounded-[2rem]"
                     >
-                      <ChevronRight className="w-8 h-8" />
+                      <span className="font-black sm:hidden">Next</span>
+                      <ChevronRight className="hidden h-8 w-8 sm:block" />
                     </Button>
                   )}
                 </motion.div>

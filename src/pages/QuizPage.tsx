@@ -226,8 +226,8 @@ const QuizPage = () => {
 
   if (examError) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4 pt-24">
-        <div className="glass-card max-w-lg rounded-3xl p-10 text-center">
+      <div className="page-shell flex items-center justify-center bg-background">
+        <div className="glass-card max-w-lg rounded-3xl p-6 text-center sm:p-10">
           <p className="mb-6 text-xl font-black">{examError}</p>
           <button
             type="button"
@@ -243,12 +243,12 @@ const QuizPage = () => {
 
   if ((!examMode && !subject) || questions.length === 0) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background pt-24">
+      <div className="page-shell flex items-center justify-center bg-background">
         <div className="text-center">
           <motion.div
-            animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="text-7xl mb-6"
+            animate={{ scale: [1, 1.12, 1], rotate: [0, 6, -6, 0] }}
+            transition={{ repeat: Infinity, duration: 2.4 }}
+            className="mb-6 text-6xl sm:text-7xl"
           >
             🎮
           </motion.div>
@@ -267,38 +267,38 @@ const QuizPage = () => {
     const percentage = examPercent(finalCorrect, questions.length);
     const passed = examMode ? examPassed(finalCorrect, questions.length, paper?.pass_mark_pct) : percentage >= 50;
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4 pt-24 pb-16">
+      <div className="page-shell flex items-center justify-center bg-background">
         <motion.div
-          initial={{ scale: 0.5, opacity: 0 }}
+          initial={{ scale: 0.92, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", bounce: 0.5 }}
-          className="glass-card w-full max-w-lg rounded-3xl p-12 text-center"
+          transition={{ type: "spring", bounce: 0.35 }}
+          className="glass-card w-full max-w-lg rounded-3xl p-6 text-center sm:p-12"
         >
           <motion.div
-            initial={{ scale: 0 }}
+            initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
-            transition={{ delay: 0.3, type: "spring", bounce: 0.6 }}
-            className="text-8xl mb-6"
+            transition={{ delay: 0.15, type: "spring", bounce: 0.4 }}
+            className="mb-4 text-6xl sm:mb-6 sm:text-8xl"
           >
             {examMode ? (passed ? "✅" : "📋") : percentage >= 80 ? "🏆" : percentage >= 50 ? "⭐" : "💪"}
           </motion.div>
-          <h2 className="mb-3 text-4xl font-black">
+          <h2 className="text-title mb-3 font-black">
             {examMode
               ? passed ? "You passed!" : "Below the pass mark"
               : percentage >= 80 ? "Amazing!" : percentage >= 50 ? "Good Job!" : "Keep Trying!"}
           </h2>
-          <p className="mb-10 text-xl font-bold text-muted-foreground">
+          <p className="mb-6 text-base font-bold text-muted-foreground sm:mb-10 sm:text-xl">
             You scored {finalCorrect} out of {questions.length}
             {examMode ? ` · Pass mark ${paper?.pass_mark_pct ?? 50}%` : ""}
           </p>
 
-          <div className="mb-10 grid grid-cols-2 gap-6">
-            <div className="rounded-3xl border border-primary/20 bg-primary/10 p-6">
-              <p className="text-4xl font-black text-primary">{score}</p>
+          <div className="mb-6 grid grid-cols-2 gap-3 sm:mb-10 sm:gap-6">
+            <div className="rounded-2xl border border-primary/20 bg-primary/10 p-4 sm:rounded-3xl sm:p-6">
+              <p className="text-3xl font-black text-primary sm:text-4xl">{score}</p>
               <p className="mt-1 text-sm font-black text-primary/70">XP Earned</p>
             </div>
-            <div className="rounded-3xl border border-game-orange/20 bg-game-orange/10 p-6">
-              <p className="text-4xl font-black text-game-orange">{percentage}%</p>
+            <div className="rounded-2xl border border-game-orange/20 bg-game-orange/10 p-4 sm:rounded-3xl sm:p-6">
+              <p className="text-3xl font-black text-game-orange sm:text-4xl">{percentage}%</p>
               <p className="mt-1 text-sm font-black text-game-orange/70">
                 {examMode ? (passed ? "Passed" : "Accuracy") : "Accuracy"}
               </p>
@@ -360,46 +360,46 @@ const QuizPage = () => {
   const waitingForNext = examMode && !showHints && selectedAnswer !== null;
 
   return (
-    <div className="min-h-screen bg-background px-4 pt-24 pb-8">
+    <div className="page-shell bg-background">
       <div className="mx-auto w-full max-w-[672px]">
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-3 rounded-2xl bg-card px-4 py-2 shadow-game">
-            <span className="text-2xl">{examMode ? "📝" : subject?.emoji}</span>
-            <span className="font-black">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 sm:mb-6">
+          <div className="flex min-w-0 items-center gap-2 rounded-2xl bg-card px-3 py-2 shadow-game sm:gap-3 sm:px-4">
+            <span className="text-xl sm:text-2xl">{examMode ? "📝" : subject?.emoji}</span>
+            <span className="truncate font-black">
               {examMode ? paper?.title ?? "Exam paper" : subject?.name}
             </span>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3 sm:gap-6">
             {examMode && (
-              <span className="text-sm font-black tracking-widest text-primary uppercase">
+              <span className="text-xs font-black tracking-widest text-primary uppercase sm:text-sm">
                 {examLabel(paper?.exam_type_id ?? "custom")}
               </span>
             )}
             {!examMode && streak >= 2 && (
               <motion.span
-                initial={{ scale: 0 }}
+                initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
-                className="flex items-center gap-1 text-lg font-black text-game-orange"
+                className="flex items-center gap-1 text-sm font-black text-game-orange sm:text-lg"
               >
                 🔥 {streak} STREAK!
               </motion.span>
             )}
-            {!examMode && <span className="text-2xl font-black text-primary">{score} XP</span>}
+            {!examMode && <span className="text-lg font-black text-primary sm:text-2xl">{score} XP</span>}
           </div>
         </div>
 
-        <div className="mb-10 flex items-center gap-4">
-          <div className="h-4 flex-1 overflow-hidden rounded-full bg-muted shadow-inner">
+        <div className="mb-6 flex items-center gap-3 sm:mb-10 sm:gap-4">
+          <div className="h-3 flex-1 overflow-hidden rounded-full bg-muted shadow-inner sm:h-4">
             <motion.div
               className="h-full rounded-full bg-primary shadow-[0_0_10px_color-mix(in_srgb,var(--primary)_50%,transparent)]"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.5, type: "spring" }}
+              transition={{ duration: 0.4, type: "spring" }}
             />
           </div>
-          <div className="flex min-w-[100px] items-center justify-center gap-2 rounded-full bg-card px-6 py-2 shadow-game">
+          <div className="flex min-w-[4.5rem] items-center justify-center gap-1.5 rounded-full bg-card px-3 py-2 shadow-game sm:min-w-[100px] sm:gap-2 sm:px-6">
             <Timer className={cn("h-5 w-5", timeLeft <= 5 ? "animate-pulse text-destructive" : "text-primary")} />
-            <span className={cn("text-xl font-black tabular-nums", timeLeft <= 5 ? "text-destructive" : "")}>
+            <span className={cn("text-lg font-black tabular-nums sm:text-xl", timeLeft <= 5 ? "text-destructive" : "")}>
               {examMode ? formatPaperClock(timeLeft) : `${timeLeft}s`}
             </span>
           </div>
@@ -417,13 +417,13 @@ const QuizPage = () => {
             exit={{ x: -50, opacity: 0 }}
             transition={{ type: "spring", bounce: 0.3 }}
           >
-            <div className="glass-card mb-8 rounded-3xl p-8 text-center sm:p-12">
-              <h2 className="text-2xl font-black sm:text-3xl">
+            <div className="glass-card mb-5 rounded-3xl p-5 text-center sm:mb-8 sm:p-12">
+              <h2 className="text-heading font-black">
                 {question.question}
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
               {question.options.map((option, i) => {
                 let stateClass = "";
 
@@ -455,7 +455,7 @@ const QuizPage = () => {
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/40 text-sm font-black">
                       {answerLabels[i]}
                     </span>
-                    <span className="flex-1">{option}</span>
+                    <span className="min-w-0 flex-1 whitespace-normal">{option}</span>
                   </motion.button>
                 );
               })}
@@ -466,38 +466,38 @@ const QuizPage = () => {
                 <motion.div
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  className="mt-10"
+                  className="mt-6 sm:mt-10"
                 >
                   <div className={cn(
-                    "flex items-start gap-6 rounded-3xl border-2 p-8 shadow-game",
+                    "flex items-start gap-3 rounded-3xl border-2 p-4 shadow-game sm:gap-6 sm:p-8",
                     isCorrect
                       ? "border-success/30 bg-success/10 text-foreground"
                       : "border-destructive/30 bg-destructive/10 text-foreground"
                   )}>
                     <div className={cn(
-                      "flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl shadow-lg",
+                      "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-lg sm:h-16 sm:w-16",
                       isCorrect ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground"
                     )}>
-                      {isCorrect ? <CheckCircle2 className="h-10 w-10" /> : <XCircle className="h-10 w-10" />}
+                      {isCorrect ? <CheckCircle2 className="h-7 w-7 sm:h-10 sm:w-10" /> : <XCircle className="h-7 w-7 sm:h-10 sm:w-10" />}
                     </div>
-                    <div>
-                      <p className="mb-2 text-3xl font-black">
+                    <div className="min-w-0 text-left">
+                      <p className="mb-2 text-xl font-black sm:text-3xl">
                         {isCorrect ? "Correct! 🎉" : "Not quite! 😊"}
                       </p>
-                      <p className="flex items-start gap-2 text-lg font-bold leading-relaxed opacity-80">
-                        <Lightbulb className="mt-1 h-6 w-6 shrink-0 text-game-orange" />
+                      <p className="flex items-start gap-2 text-sm font-bold leading-relaxed opacity-80 sm:text-lg">
+                        <Lightbulb className="mt-1 h-5 w-5 shrink-0 text-game-orange sm:h-6 sm:w-6" />
                         {question.explanation}
                       </p>
                     </div>
                   </div>
 
                   <motion.button
-                    initial={{ scale: 0.9 }}
+                    initial={{ scale: 0.98 }}
                     animate={{ scale: 1 }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={nextQuestion}
-                    className="mt-4 flex w-full items-center justify-center gap-3 rounded-2xl bg-primary py-3 text-lg font-black text-primary-foreground shadow-lg shadow-primary/20 transition-all"
+                    className="mt-4 flex min-h-14 w-full items-center justify-center gap-3 rounded-2xl bg-primary py-3 text-lg font-black text-primary-foreground shadow-lg shadow-primary/20 transition-all"
                   >
                     {currentIndex + 1 >= questions.length ? "See Results 🏆" : "Next Question"}
                     <ArrowRight className="w-8 h-8" />

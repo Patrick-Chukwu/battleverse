@@ -30,7 +30,7 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pt-[66px]">
+    <div className="page-offset bg-background">
       {!backendReady && (
         <div className="relative z-30 border-b border-border bg-card/95 px-4 py-3 text-center text-sm font-bold text-muted-foreground">
           This deploy has no Supabase keys, so it is guest-only (local quizzes, mock leaderboard, no sign-in).
@@ -38,71 +38,71 @@ const HomePage = () => {
           <code className="font-black text-foreground">VITE_SUPABASE_ANON_KEY</code> on Vercel, then Redeploy.
         </div>
       )}
-      <section className="relative flex min-h-[75vh] items-center justify-center overflow-hidden">
+      <section className="relative flex min-h-[min(70dvh,36rem)] items-center justify-center overflow-hidden px-4 py-10 sm:min-h-[75vh] sm:py-16">
         <FloatingIcons />
 
-        <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
+        <div className="relative z-10 mx-auto max-w-4xl text-center">
           <motion.div
-            initial={{ scale: 0.5, opacity: 0 }}
+            initial={{ scale: 0.85, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", duration: 0.8, bounce: 0.5 }}
-            className="mb-6 text-7xl"
+            transition={{ type: "spring", duration: 0.6, bounce: 0.35 }}
+            className="mb-4 text-5xl sm:mb-6 sm:text-7xl"
           >
             🚀
           </motion.div>
 
           <motion.h1
-            initial={{ y: 30, opacity: 0 }}
+            initial={{ y: 24, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="mb-4 text-5xl font-black tracking-tight sm:text-7xl"
+            transition={{ delay: 0.1 }}
+            className="text-display mb-3 font-black tracking-tight sm:mb-4"
           >
             Welcome to{" "}
             <span className="text-primary">Battleverse</span>
           </motion.h1>
 
           <motion.p
-            initial={{ y: 20, opacity: 0 }}
+            initial={{ y: 16, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="mb-10 text-xl font-bold text-muted-foreground sm:text-2xl"
+            transition={{ delay: 0.2 }}
+            className="mb-8 text-lg font-bold text-muted-foreground sm:mb-10 sm:text-2xl"
           >
             Learn. Play. Compete. 🎯
           </motion.p>
 
           <motion.div
-            initial={{ y: 20, opacity: 0 }}
+            initial={{ y: 16, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="flex flex-col justify-center gap-4 sm:flex-row"
+            transition={{ delay: 0.3 }}
+            className="mx-auto flex max-w-md flex-col justify-center gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:gap-4"
           >
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => navigate("/battle")}
-              className="animate-pulse-glow group flex items-center justify-center gap-2 rounded-2xl bg-primary px-8 py-4 text-lg font-black text-primary-foreground shadow-lg transition-all hover:shadow-xl"
+              className="animate-pulse-glow group flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-4 text-base font-black text-primary-foreground shadow-lg transition-all hover:shadow-xl sm:px-8 sm:text-lg"
             >
-              <Swords className="h-6 w-6" />
+              <Swords className="h-5 w-5 sm:h-6 sm:w-6" />
               Start Battle
-              <ArrowRight className="h-6 w-6 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1 sm:h-6 sm:w-6" />
             </motion.button>
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => navigate("/subjects")}
-              className="flex items-center justify-center gap-2 rounded-2xl border-2 border-border bg-card px-8 py-4 text-lg font-black text-foreground transition-all hover:border-primary/30 hover:bg-primary/5"
+              className="flex min-h-14 items-center justify-center gap-2 rounded-2xl border-2 border-border bg-card px-6 py-4 text-base font-black text-foreground transition-all hover:border-primary/30 hover:bg-primary/5 sm:px-8 sm:text-lg"
             >
-              <BookOpen className="h-6 w-6" />
+              <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
               Practice Solo
             </motion.button>
             {(showExams || !backendReady) && (
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => navigate("/exams")}
-                className="flex items-center justify-center gap-2 rounded-2xl border-2 border-border bg-card px-8 py-4 text-lg font-black text-foreground transition-all hover:border-primary/30 hover:bg-primary/5"
+                className="flex min-h-14 items-center justify-center gap-2 rounded-2xl border-2 border-border bg-card px-6 py-4 text-base font-black text-foreground transition-all hover:border-primary/30 hover:bg-primary/5 sm:px-8 sm:text-lg"
               >
-                <ClipboardList className="h-6 w-6" />
+                <ClipboardList className="h-5 w-5 sm:h-6 sm:w-6" />
                 Exam papers
               </motion.button>
             )}
@@ -111,55 +111,55 @@ const HomePage = () => {
       </section>
 
       <motion.section
-        initial={{ y: 30, opacity: 0 }}
+        initial={{ y: 24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="relative z-20 container mx-auto -mt-12 px-4"
+        className="relative z-20 container mx-auto -mt-6 px-4 sm:-mt-12"
       >
-        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="glass-card rounded-3xl p-6 text-center"
+              className="glass-card rounded-2xl p-4 text-center sm:rounded-3xl sm:p-6"
             >
-              <p className={cn("text-3xl font-black", stat.className)}>{stat.value}</p>
-              <p className="mt-1 text-sm font-bold text-muted-foreground">{stat.label}</p>
+              <p className={cn("truncate text-xl font-black sm:text-3xl", stat.className)}>{stat.value}</p>
+              <p className="mt-1 text-xs font-bold text-muted-foreground sm:text-sm">{stat.label}</p>
             </div>
           ))}
         </div>
       </motion.section>
 
-      <section className="container mx-auto px-4 py-24">
+      <section className="container mx-auto px-4 py-12 sm:py-24">
         <motion.div
-          initial={{ y: 20, opacity: 0 }}
+          initial={{ y: 16, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mb-16 text-center"
+          className="mb-8 text-center sm:mb-16"
         >
-          <h2 className="mb-2 text-center text-3xl font-black">
+          <h2 className="text-title mb-2 text-center font-black">
             Choose Your Arena ⚔️
           </h2>
-          <p className="text-lg font-bold text-muted-foreground">Pick a subject and start your quest</p>
+          <p className="text-base font-bold text-muted-foreground sm:text-lg">Pick a subject and start your quest</p>
         </motion.div>
 
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
           {subjects.map((subject, i) => (
             <motion.button
               key={subject.id}
-              initial={{ y: 30, opacity: 0 }}
+              initial={{ y: 24, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -8, scale: 1.02 }}
+              transition={{ delay: i * 0.06 }}
+              whileHover={{ y: -6, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => navigate(`/quiz/${subject.id}`)}
               className={cn(
-                "glass-card group cursor-pointer rounded-3xl border-2 border-transparent p-6 text-left transition-all",
+                "glass-card group cursor-pointer rounded-3xl border-2 border-transparent p-5 text-left transition-all sm:p-6",
                 subjectHover[subject.color]
               )}
             >
-              <div className="mb-4 text-5xl transition-transform duration-300 group-hover:scale-110">
+              <div className="mb-3 text-4xl transition-transform duration-300 group-hover:scale-110 sm:mb-4 sm:text-5xl">
                 {subject.emoji}
               </div>
               <h3 className="mb-1 text-lg font-black">{subject.name}</h3>
-              <p className="mb-4 font-medium leading-relaxed text-muted-foreground">{subject.description}</p>
+              <p className="mb-4 text-sm font-medium leading-relaxed text-muted-foreground sm:text-base">{subject.description}</p>
               <div className="flex items-center gap-2 text-sm font-black text-primary">
                 Play Now <ArrowRight className="h-4 w-4" />
               </div>
@@ -168,23 +168,23 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 pb-24">
+      <section className="container mx-auto px-4 pb-8 sm:pb-24">
         <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
+          initial={{ scale: 0.98, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="relative overflow-hidden rounded-3xl bg-primary p-12 text-center shadow-2xl shadow-primary/20 sm:p-20"
+          className="relative overflow-hidden rounded-3xl bg-primary p-8 text-center shadow-2xl shadow-primary/20 sm:p-20"
         >
           <div className="relative z-10">
-            <h2 className="mb-3 text-3xl font-black text-primary-foreground sm:text-4xl">Level Up Your Brain with Highfrica</h2>
-            <p className="mb-10 text-xl font-bold text-primary-foreground/80 sm:text-2xl">The best place to learn and play for kids</p>
-<motion.button
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.95 }}
-  onClick={() => window.open("https://highfrica.com", "_blank", "noopener,noreferrer")}
-  className="rounded-2xl bg-card px-8 py-3 font-black text-foreground shadow-lg transition-all"
->
-  Start Learning Now
-</motion.button>
+            <h2 className="text-title mb-3 font-black text-primary-foreground">Level Up Your Brain with Highfrica</h2>
+            <p className="mb-8 text-base font-bold text-primary-foreground/80 sm:mb-10 sm:text-2xl">The best place to learn and play for kids</p>
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => window.open("https://highfrica.com", "_blank", "noopener,noreferrer")}
+              className="min-h-12 rounded-2xl bg-card px-8 py-3 font-black text-foreground shadow-lg transition-all"
+            >
+              Start Learning Now
+            </motion.button>
           </div>
 
           <div className="absolute top-0 right-0 -mt-32 -mr-32 h-64 w-64 rounded-full bg-white/10 blur-3xl" />

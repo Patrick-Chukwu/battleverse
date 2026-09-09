@@ -65,10 +65,10 @@ const LegalPage = () => {
   const page = slug === "terms" ? pages.terms : pages.privacy;
 
   return (
-    <div className="min-h-screen bg-background px-4 pt-24 pb-16">
-      <article className="glass-card mx-auto w-full max-w-2xl rounded-3xl p-8 sm:p-12">
+    <div className="page-shell bg-background">
+      <article className="glass-card mx-auto w-full max-w-2xl rounded-3xl p-5 sm:p-12">
         <p className="mb-2 text-xs font-black tracking-widest text-primary uppercase">Legal</p>
-        <h1 className="mb-2 text-4xl font-black tracking-tight">{page.title}</h1>
+        <h1 className="text-title mb-2 font-black tracking-tight">{page.title}</h1>
         <p className="mb-8 text-sm font-bold text-muted-foreground">Last updated {page.updated}</p>
         <div className="space-y-6">
           {page.sections.map((section) => (

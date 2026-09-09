@@ -62,21 +62,21 @@ const AdminPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-16">
-      <div className="container mx-auto max-w-6xl px-4">
-        <h1 className="mb-2 text-4xl font-black tracking-tight text-primary">Admin CMS</h1>
+    <div className="page-shell bg-background">
+      <div className="mx-auto max-w-6xl">
+        <h1 className="text-title mb-2 font-black tracking-tight text-primary">Admin CMS</h1>
         <p className="mb-8 font-bold text-muted-foreground">
           Publish questions into the same catalog Practice already syncs. Learner screens stay as
           they are.
         </p>
-        <div className="mb-8 flex flex-wrap gap-2">
+        <div className="mb-6 flex gap-2 overflow-x-auto pb-1 sm:mb-8 sm:flex-wrap">
           {TABS.map((item) => (
             <button
               key={item.id}
               type="button"
               onClick={() => setTab(item.id)}
               className={cn(
-                "rounded-2xl px-4 py-2 text-sm font-black",
+                "shrink-0 rounded-2xl px-4 py-2 text-sm font-black",
                 tab === item.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
               )}
             >
@@ -95,7 +95,7 @@ const AdminPage = () => {
 
 function Gate({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-center">
+    <div className="page-shell flex flex-col items-center justify-center bg-background text-center">
       <h1 className="mb-3 text-3xl font-black">{title}</h1>
       <p className="max-w-md font-bold text-muted-foreground">{children}</p>
     </div>

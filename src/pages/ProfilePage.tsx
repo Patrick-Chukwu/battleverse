@@ -36,16 +36,16 @@ const ProfilePage = () => {
   }));
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-16">
-      <div className="container mx-auto max-w-4xl px-4">
+    <div className="page-shell bg-background">
+      <div className="mx-auto max-w-4xl">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="glass-card relative mb-8 overflow-hidden rounded-3xl p-10 text-center"
+          className="glass-card relative mb-6 overflow-hidden rounded-3xl p-6 text-center sm:mb-8 sm:p-10"
         >
           <div className="relative z-10">
-            <div className="relative mb-6 inline-block">
-              <span className="block text-8xl">{profile.avatar}</span>
+            <div className="relative mb-4 inline-block sm:mb-6">
+              <span className="block text-6xl sm:text-8xl">{profile.avatar}</span>
               <motion.button
                 type="button"
                 whileHover={{ scale: 1.1 }}
@@ -58,10 +58,10 @@ const ProfilePage = () => {
               </motion.button>
             </div>
 
-            <h1 className="mb-1 flex items-center justify-center gap-2 text-2xl font-black sm:text-4xl">
+            <h1 className="mb-1 break-words text-2xl font-black sm:text-4xl">
               {profile.name}
             </h1>
-            <p className="mb-2 text-xl font-bold text-muted-foreground">
+            <p className="mb-2 text-base font-bold text-muted-foreground sm:text-xl">
               Level {levelInfo.level} • {levelInfo.title}
             </p>
             {isSupabaseConfigured() && !session ? (
@@ -93,17 +93,17 @@ const ProfilePage = () => {
           </div>
         </motion.div>
 
-        <div className="mb-12 grid grid-cols-2 gap-6 sm:grid-cols-4">
+        <div className="mb-8 grid grid-cols-2 gap-3 sm:mb-12 sm:grid-cols-4 sm:gap-6">
           {stats.map((stat, i) => (
             <motion.div
               key={stat.label}
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.92, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: i * 0.1, type: "spring", bounce: 0.5 }}
-              className="glass-card rounded-3xl p-6 text-center"
+              transition={{ delay: i * 0.06, type: "spring", bounce: 0.35 }}
+              className="glass-card rounded-2xl p-4 text-center sm:rounded-3xl sm:p-6"
             >
-              <span className="mb-2 block text-4xl">{stat.icon}</span>
-              <p className={cn("mb-0.5 text-2xl font-black", stat.color)}>{stat.value}</p>
+              <span className="mb-2 block text-3xl sm:text-4xl">{stat.icon}</span>
+              <p className={cn("mb-0.5 text-xl font-black sm:text-2xl", stat.color)}>{stat.value}</p>
               <p className="text-sm font-bold text-muted-foreground">{stat.label}</p>
             </motion.div>
           ))}
@@ -113,22 +113,22 @@ const ProfilePage = () => {
           <h2 className="mb-4 text-2xl font-black">
             Badges 🏅
           </h2>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
             {badges.map((badge, i) => (
               <motion.div
                 key={badge.id}
-                initial={{ y: 20, opacity: 0 }}
+                initial={{ y: 16, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4 + i * 0.05 }}
+                transition={{ delay: 0.2 + i * 0.04 }}
                 className={cn(
-                  "glass-card rounded-3xl border-2 p-6 text-center transition-all group",
+                  "glass-card group rounded-2xl border-2 p-4 text-center transition-all sm:rounded-3xl sm:p-6",
                   badge.unlocked
                     ? "border-game-orange/20 hover:shadow-game"
                     : "border-transparent opacity-60 grayscale"
                 )}
               >
                 <div className={cn(
-                  "mb-4 text-5xl transition-transform duration-300 group-hover:scale-110",
+                  "mb-3 text-4xl transition-transform duration-300 group-hover:scale-110 sm:mb-4 sm:text-5xl",
                   !badge.unlocked && "blur-[1px]"
                 )}>
                   {badge.icon}

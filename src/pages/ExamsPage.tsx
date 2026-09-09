@@ -27,7 +27,7 @@ const ExamsPage = () => {
 
   if (!enabled) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4 pt-24">
+      <div className="page-shell flex items-center justify-center bg-background">
         <p className="text-center text-xl font-black text-muted-foreground">
           Exam papers need the Battleverse backend.
         </p>
@@ -36,11 +36,11 @@ const ExamsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background px-4 pt-24 pb-16">
+    <div className="page-shell bg-background">
       <div className="mx-auto w-full max-w-[864px]">
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-12 text-center">
-          <h1 className="mb-2 text-4xl font-black tracking-tight">Exam papers 📝</h1>
-          <p className="text-xl font-bold text-muted-foreground">
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-8 text-center sm:mb-12">
+          <h1 className="text-title mb-2 font-black tracking-tight">Exam papers 📝</h1>
+          <p className="text-base font-bold text-muted-foreground sm:text-xl">
             Timed mocks. No hints until you submit. Pass mark on the report.
           </p>
         </motion.div>
@@ -69,16 +69,16 @@ const ExamsPage = () => {
               whileHover={{ y: -4, scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => navigate(`/exam/${paper.id}`)}
-              className="glass-card group flex min-h-[160px] cursor-pointer items-center gap-6 rounded-3xl border-2 border-transparent p-8 text-left transition-all hover:border-primary/30"
+              className="glass-card group flex cursor-pointer items-start gap-4 rounded-3xl border-2 border-transparent p-5 text-left transition-all hover:border-primary/30 sm:min-h-[160px] sm:items-center sm:gap-6 sm:p-8"
             >
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <ClipboardList className="h-8 w-8" />
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary sm:h-16 sm:w-16">
+                <ClipboardList className="h-7 w-7 sm:h-8 sm:w-8" />
               </div>
-              <div className="flex-1">
+              <div className="min-w-0 flex-1">
                 <p className="mb-1 text-xs font-black tracking-widest text-primary uppercase">
                   {examLabel(paper.exam_type_id)}
                 </p>
-                <h2 className="mb-2 text-2xl font-black">{paper.title}</h2>
+                <h2 className="mb-2 text-xl font-black sm:text-2xl">{paper.title}</h2>
                 <p className="font-bold text-muted-foreground">
                   {paper.question_ids?.length || paper.question_count} questions
                   {" · "}

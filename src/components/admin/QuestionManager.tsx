@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-const selectClass = "h-10 rounded-2xl border border-input bg-background px-3 text-sm font-bold";
+const selectClass = "h-10 w-full min-w-0 rounded-2xl border border-input bg-background px-3 text-sm font-bold sm:w-auto";
 
 export function QuestionManager() {
   const queryClient = useQueryClient();
@@ -93,7 +93,7 @@ export function QuestionManager() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-end gap-2">
+      <div className="grid grid-cols-2 items-end gap-2 sm:flex sm:flex-wrap">
         <label className="space-y-1 text-xs font-black uppercase tracking-widest">
           Subject
           <select className={selectClass} value={subject} onChange={(e) => setSubject(e.target.value)}>
@@ -153,7 +153,7 @@ export function QuestionManager() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search prompt or id"
-          className="h-10 max-w-xs rounded-2xl px-3 font-bold"
+          className="col-span-2 h-10 rounded-2xl px-3 font-bold sm:max-w-xs"
         />
         <Button
           type="button"
@@ -161,7 +161,7 @@ export function QuestionManager() {
             setDraft(emptyQuestionDraft());
             setEditorOpen(true);
           }}
-          className="h-10 rounded-2xl font-black"
+          className="col-span-2 h-10 rounded-2xl font-black sm:col-span-1"
         >
           New question
         </Button>
