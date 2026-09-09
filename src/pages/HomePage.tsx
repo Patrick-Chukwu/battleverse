@@ -175,16 +175,16 @@ const HomePage = () => {
           className="relative overflow-hidden rounded-3xl bg-primary p-12 text-center shadow-2xl shadow-primary/20 sm:p-20"
         >
           <div className="relative z-10">
-            <h2 className="mb-3 text-3xl font-black text-primary-foreground sm:text-4xl">Level Up Your Brain 🧠</h2>
-            <p className="mb-10 text-xl font-bold text-primary-foreground/80 sm:text-2xl">Battle. Learn. Win. — Future Tech Starts Here</p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => navigate("/subjects")}
-              className="rounded-2xl bg-card px-8 py-3 font-black text-foreground shadow-lg transition-all"
-            >
-              Start Learning Now
-            </motion.button>
+            <h2 className="mb-3 text-3xl font-black text-primary-foreground sm:text-4xl">Level Up Your Brain with Highfrica</h2>
+            <p className="mb-10 text-xl font-bold text-primary-foreground/80 sm:text-2xl">The best place to learn and play for kids</p>
+<motion.button
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  onClick={() => window.open("https://highfrica.com", "_blank", "noopener,noreferrer")}
+  className="rounded-2xl bg-card px-8 py-3 font-black text-foreground shadow-lg transition-all"
+>
+  Start Learning Now
+</motion.button>
           </div>
 
           <div className="absolute top-0 right-0 -mt-32 -mr-32 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
