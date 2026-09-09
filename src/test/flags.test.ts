@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { isServerProfileEnabled, isSupabaseConfigured } from "@/lib/flags";
+import {
+  isInvitesEnabled,
+  isLiveBattleEnabled,
+  isServerProfileEnabled,
+  isSupabaseConfigured,
+} from "@/lib/flags";
 
 describe("flags", () => {
   afterEach(() => {
@@ -11,5 +16,22 @@ describe("flags", () => {
     vi.stubEnv("VITE_SUPABASE_ANON_KEY", "");
     expect(isSupabaseConfigured()).toBe(false);
     expect(isServerProfileEnabled()).toBe(false);
+    expect(isLiveBattleEnabled()).toBe(false);
+    expect(isInvitesEnabled()).toBe(false);
+  });
+
+  it("turns invites off when live battle is off", () => {
+    vi.stubEnv("VITE_SUPABASE_URL", "https://example.supabase.co");
+    vi.stubEnv("VITE_SUPABASE_ANON_KEY", "anon");
+    vi.stubEnv("VITE_USE_LIVE_BATTLE", "false");
+    expect(isInvitesEnabled()).toBe(false);
+  });
+
+  it("defaults invites on when live battle is on", () => {
+    vi.stubEnv("VITE_SUPABASE_URL", "https://example.supabase.co");
+    vi.stubEnv("VITE_SUPABASE_ANON_KEY", "anon");
+    vi.stubEnv("VITE_USE_LIVE_BATTLE", "true");
+    vi.stubEnv("VITE_USE_INVITES", "");
+    expect(isInvitesEnabled()).toBe(true);
   });
 });

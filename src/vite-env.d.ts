@@ -7,6 +7,7 @@ interface ImportMetaEnv {
   readonly VITE_USE_SERVER_PROFILE: string;
   readonly VITE_USE_DEXIE_QUESTIONS: string;
   readonly VITE_USE_LIVE_BATTLE: string;
+  readonly VITE_USE_INVITES: string;
 }
 
 interface ImportMeta {

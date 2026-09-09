@@ -191,8 +191,8 @@ const LoginPage = () => {
 
         {tab === "phone" && (
           <div className="mb-6 rounded-2xl border border-border p-4 text-sm font-bold text-muted-foreground">
-            Phone login is stubbed for Phase 1. Use email sign-in for now — phone
-            findability lands with challenges (Phase 4).
+            Phone login is still stubbed. Use email sign-in, then add a hashed phone
+            on Profile if you want friends to find you by number.
           </div>
         )}
 

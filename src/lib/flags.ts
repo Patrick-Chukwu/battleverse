@@ -23,3 +23,9 @@ export function isLiveBattleEnabled(): boolean {
   if (!isSupabaseConfigured()) return false;
   return import.meta.env.VITE_USE_LIVE_BATTLE !== "false";
 }
+
+/** Challenge / invite on live rooms. Default on when live battle is on. */
+export function isInvitesEnabled(): boolean {
+  if (!isLiveBattleEnabled()) return false;
+  return import.meta.env.VITE_USE_INVITES !== "false";
+}

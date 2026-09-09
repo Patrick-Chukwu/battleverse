@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { FloatingIcons } from "@/components/FloatingIcons";
 import { subjects } from "@/data/quizData";
-import { useGameStore } from "@/store/gameStore";
+import { defaultProfile, useGameStore } from "@/store/gameStore";
 import { getLevel } from "@/data/gameData";
 import { Swords, BookOpen, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,7 +16,7 @@ const subjectHover: Record<string, string> = {
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { profile } = useGameStore();
+  const profile = useGameStore((s) => s.profile) ?? defaultProfile;
   const levelInfo = getLevel(profile.xp);
 
   const stats = [
@@ -91,8 +91,7 @@ const HomePage = () => {
 
       <motion.section
         initial={{ y: 30, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true }}
+        animate={{ y: 0, opacity: 1 }}
         className="relative z-20 container mx-auto -mt-12 px-4"
       >
         <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 lg:grid-cols-4">
@@ -111,8 +110,7 @@ const HomePage = () => {
       <section className="container mx-auto px-4 py-24">
         <motion.div
           initial={{ y: 20, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
+          animate={{ y: 0, opacity: 1 }}
           className="mb-16 text-center"
         >
           <h2 className="mb-2 text-center text-3xl font-black">
@@ -126,8 +124,7 @@ const HomePage = () => {
             <motion.button
               key={subject.id}
               initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true }}
+              animate={{ y: 0, opacity: 1 }}
               transition={{ delay: i * 0.1 }}
               whileHover={{ y: -8, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -153,8 +150,7 @@ const HomePage = () => {
       <section className="container mx-auto px-4 pb-24">
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
-          viewport={{ once: true }}
+          animate={{ scale: 1, opacity: 1 }}
           className="relative overflow-hidden rounded-3xl bg-primary p-12 text-center shadow-2xl shadow-primary/20 sm:p-20"
         >
           <div className="relative z-10">

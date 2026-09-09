@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navbar } from "@/components/Navbar";
 import { AuthHydrator } from "@/components/auth/AuthHydrator";
+import { InviteToaster } from "@/components/invite/InviteToaster";
+import { PresenceTracker } from "@/components/invite/PresenceTracker";
 import { OfflineBanner } from "@/components/OfflineBanner";
 import { PracticeSync } from "@/components/PracticeSync";
 import HomePage from "./pages/HomePage";
@@ -25,6 +27,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthHydrator />
+        <PresenceTracker />
+        <InviteToaster />
         <PracticeSync />
         <Navbar />
         <OfflineBanner />

@@ -1,7 +1,9 @@
 import { getSupabase } from "@/lib/supabase";
-import { isDexieQuestionsEnabled, isServerProfileEnabled } from "@/lib/flags";
+import { isDexieQuestionsEnabled, isInvitesEnabled, isServerProfileEnabled } from "@/lib/flags";
 import { offlineDb, type OutboxItem } from "@/lib/offline-db";
 import { cacheServerQuestions, seedBundledQuestions } from "@/lib/practice-questions";
+import type { AgeBand } from "@/lib/database.types";
+import type { Subject } from "@/data/quizData";
 
 export async function pendingOutboxCount(): Promise<number> {
   return offlineDb.outbox.where("syncStatus").equals("pending").count();
@@ -43,8 +45,24 @@ export async function flushOutbox(): Promise<{ flushed: number; failed: number }
   let failed = 0;
 
   for (const item of pending) {
-    const rpc = item.type === "finish" ? "finish_practice" : "submit_attempt";
-    const { error } = await supabase.rpc(rpc, { payload: item.payload });
+    let error: { message: string } | null = null;
+    if (item.type === "invite_send") {
+      if (!isInvitesEnabled()) {
+        await offlineDb.outbox.update(item.id, { syncStatus: "error" });
+        failed += 1;
+        continue;
+      }
+      const result = await supabase.rpc("send_invite", {
+        p_to_id: item.payload.to_id as string,
+        p_subject_id: item.payload.subject_id as Subject,
+        p_age_band: item.payload.age_band as AgeBand,
+      });
+      error = result.error;
+    } else {
+      const rpc = item.type === "finish" ? "finish_practice" : "submit_attempt";
+      const result = await supabase.rpc(rpc, { payload: item.payload });
+      error = result.error;
+    }
     if (error) {
       failed += 1;
       await offlineDb.outbox.update(item.id, {

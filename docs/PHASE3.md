@@ -34,3 +34,5 @@ Also enable Realtime for `battles`, `battle_players`, `battle_events`, and `matc
 ## Flag
 
 `VITE_USE_LIVE_BATTLE` defaults on when `.env.local` has Supabase keys. Set it to `false` to restore local bots.
+
+Directed challenges (search, invite, shareable code) are Phase 4 — see [PHASE4.md](./PHASE4.md).

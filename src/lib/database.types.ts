@@ -1,6 +1,9 @@
 export type AgeBand = "6-8" | "9-12" | "13-16" | "16plus";
 export type UserRole = "player" | "admin";
 export type BattleStatus = "waiting" | "active" | "complete" | "forfeit";
+export type InviteStatus = "pending" | "accepted" | "declined" | "expired" | "queued_offline";
+export type PresenceStatus = "online" | "idle" | "in_battle" | "offline";
+export type BattleMode = "matchmaking" | "challenge";
 
 export interface ProfileRow {
   id: string;

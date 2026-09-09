@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { mockLeaderboard } from "@/data/gameData";
-import { useGameStore } from "@/store/gameStore";
+import { defaultProfile, useGameStore } from "@/store/gameStore";
 import { cn } from "@/lib/utils";
 
 const podiumEmoji = ["🥇", "🥈", "🥉"];
 
 const LeaderboardPage = () => {
-  const { profile } = useGameStore();
+  const profile = useGameStore((s) => s.profile) ?? defaultProfile;
 
   const allPlayers = [
     { name: profile.name, avatar: profile.avatar, xp: profile.xp, level: profile.level, isYou: true },
