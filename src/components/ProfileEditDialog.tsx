@@ -32,7 +32,7 @@ export function ProfileEditDialog({ open, onOpenChange }: ProfileEditDialogProps
   const [avatar, setAvatarLocal] = useState(profile.avatar);
   const [discoverable, setDiscoverable] = useState(false);
 
-  const handleOpenChange = (next: boolean) => {
+  const onOpen = (next: boolean) => {
     if (next) {
       setNameLocal(profile.name);
       setAvatarLocal(profile.avatar);
@@ -75,7 +75,7 @@ export function ProfileEditDialog({ open, onOpenChange }: ProfileEditDialogProps
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpen}>
       <DialogContent className="max-w-md rounded-3xl p-6 sm:max-w-md" showCloseButton>
         <DialogHeader>
           <DialogTitle className="text-2xl font-black">Edit profile</DialogTitle>

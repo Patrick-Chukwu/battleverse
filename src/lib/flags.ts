@@ -1,4 +1,4 @@
-/** Feature flags. Practice uses Dexie when Supabase is configured (Phase 2). */
+/** Feature flags from docs/BUILD_PLAN.md. */
 
 export function isSupabaseConfigured(): boolean {
   const url = import.meta.env.VITE_SUPABASE_URL;
