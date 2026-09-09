@@ -17,6 +17,8 @@ import {
   rpcTickBattle,
   type BattleStateDto,
 } from "@/lib/battle-api";
+import { rpcCancelInvite, rpcGetInvite, type InviteDto } from "@/lib/invite-api";
+import { dropChannel, subscribePostgresChanges } from "@/lib/realtime";
 import { fetchOwnProfile } from "@/hooks/useProfile";
 import { useGameStore } from "@/store/gameStore";
 import type { AgeBand } from "@/lib/database.types";
@@ -52,8 +54,14 @@ export interface BattleState {
   questionStartedAt: string | null;
   questionDurationMs: number;
   serverOffsetMs: number;
+  isWaitingInvite: boolean;
+  inviteId: string | null;
+  inviteCode: string | null;
+  inviteLabel: string | null;
 
   startSearch: (subject: Subject, ageGroup: string) => void;
+  joinBattle: (battleId: string) => void;
+  waitForInvite: (invite: InviteDto) => void;
   submitAnswer: (index: number) => void;
   tickTimer: () => void;
   nextQuestion: () => void;
@@ -85,6 +93,10 @@ const emptyBattle = {
   questionStartedAt: null as string | null,
   questionDurationMs: 10000,
   serverOffsetMs: 0,
+  isWaitingInvite: false,
+  inviteId: null as string | null,
+  inviteCode: null as string | null,
+  inviteLabel: null as string | null,
 };
 
 let botTimer: ReturnType<typeof setTimeout> | null = null;
@@ -120,20 +132,21 @@ class LiveSession {
     if (this.heartbeatId) window.clearInterval(this.heartbeatId);
     this.pollId = null;
     this.heartbeatId = null;
-    if (this.channel) {
-      const supabase = getSupabase();
-      void supabase?.removeChannel(this.channel);
-    }
+    dropChannel(getSupabase(), this.channel);
     this.channel = null;
   }
 
-  async start(subject: Subject, ageGroup: string) {
+  async resolveUser() {
     const supabase = getSupabase();
     if (!supabase) throw new Error("Supabase is not configured");
     const { data } = await supabase.auth.getUser();
     this.myId = data.user?.id ?? null;
     if (!this.myId) throw new Error("not signed in");
+    return supabase;
+  }
 
+  async start(subject: Subject, ageGroup: string) {
+    await this.resolveUser();
     const result = await rpcStartMatchmaking(subject, ageGroup as AgeBand);
     if (this.disposed) return;
     if (result.battle_id) {
@@ -146,25 +159,77 @@ class LiveSession {
     this.subscribeQueue();
   }
 
+  async joinExisting(battleId: string) {
+    await this.resolveUser();
+    if (this.disposed) return;
+    await this.attach(battleId);
+  }
+
+  async watchInvite(invite: InviteDto) {
+    const supabase = await this.resolveUser();
+    if (this.disposed) return;
+    if (invite.battle_id) {
+      await this.attach(invite.battle_id);
+      return;
+    }
+    this.pollId = window.setInterval(() => {
+      void this.pollInvite(invite.id);
+    }, 2000);
+    this.channel = subscribePostgresChanges(supabase, `invite:${invite.id}`, [
+      {
+        event: "UPDATE",
+        table: "invites",
+        filter: `id=eq.${invite.id}`,
+        handler: () => {
+          void this.pollInvite(invite.id);
+        },
+      },
+    ]);
+  }
+
+  async pollInvite(inviteId: string) {
+    if (this.disposed || this.battleId) return;
+    try {
+      const row = await rpcGetInvite(inviteId);
+      if (row.battle_id) {
+        await this.attach(row.battle_id);
+        return;
+      }
+      if (row.status === "declined") {
+        this.apply({
+          isWaitingInvite: false,
+          isSearching: false,
+          error: `${row.to_username ?? "Your rival"} declined — find anyone instead.`,
+        });
+        this.dispose();
+        return;
+      }
+      if (row.status === "expired") {
+        this.apply({
+          isWaitingInvite: false,
+          isSearching: false,
+          error: "That challenge expired. Find anyone, or send a new invite.",
+        });
+        this.dispose();
+      }
+    } catch {
+      /* keep waiting */
+    }
+  }
+
   subscribeQueue() {
     const supabase = getSupabase();
     if (!supabase || !this.myId) return;
-    this.channel = supabase
-      .channel(`matchmaking:${this.myId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "battle_players",
-          filter: `user_id=eq.${this.myId}`,
+    this.channel = subscribePostgresChanges(supabase, `matchmaking:${this.myId}`, [
+      {
+        event: "INSERT",
+        table: "battle_players",
+        filter: `user_id=eq.${this.myId}`,
+        handler: () => {
+          void this.pollQueue();
         },
-        (payload) => {
-          const row = payload.new as { battle_id?: string };
-          if (row.battle_id) void this.attach(row.battle_id);
-        }
-      )
-      .subscribe();
+      },
+    ]);
   }
 
   async pollQueue() {
@@ -186,36 +251,36 @@ class LiveSession {
       this.pollId = null;
     }
     const supabase = getSupabase();
-    if (this.channel && supabase) {
-      void supabase.removeChannel(this.channel);
-      this.channel = null;
-    }
+    dropChannel(supabase, this.channel);
+    this.channel = null;
     if (!supabase) return;
 
-    this.channel = supabase
-      .channel(`battle:${battleId}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "battles", filter: `id=eq.${battleId}` },
-        () => {
+    this.channel = subscribePostgresChanges(supabase, `battle:${battleId}`, [
+      {
+        event: "*",
+        table: "battles",
+        filter: `id=eq.${battleId}`,
+        handler: () => {
           void this.refresh();
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "battle_players", filter: `battle_id=eq.${battleId}` },
-        () => {
+        },
+      },
+      {
+        event: "*",
+        table: "battle_players",
+        filter: `battle_id=eq.${battleId}`,
+        handler: () => {
           void this.refresh();
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "battle_events", filter: `battle_id=eq.${battleId}` },
-        () => {
+        },
+      },
+      {
+        event: "INSERT",
+        table: "battle_events",
+        filter: `battle_id=eq.${battleId}`,
+        handler: () => {
           void this.refresh();
-        }
-      )
-      .subscribe();
+        },
+      },
+    ]);
 
     if (this.heartbeatId) window.clearInterval(this.heartbeatId);
     this.heartbeatId = window.setInterval(() => {
@@ -439,6 +504,58 @@ export function createBattleActions(
       });
     },
 
+    joinBattle: (battleId: string) => {
+      disposeLiveBattle();
+      if (!isLiveBattleEnabled()) {
+        set({ error: "Live battle is off." });
+        return;
+      }
+      set({
+        ...emptyBattle,
+        isSearching: true,
+        isLive: true,
+        battleId,
+        error: null,
+      });
+      live = new LiveSession(apply, get);
+      void live.joinExisting(battleId).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : "Could not join that battle.";
+        set({
+          isSearching: false,
+          isLive: true,
+          error: message === "not signed in" ? "Sign in to enter a live battle." : message,
+        });
+      });
+    },
+
+    waitForInvite: (invite: InviteDto) => {
+      disposeLiveBattle();
+      const label = invite.to_username
+        ? `Waiting for ${invite.to_username}`
+        : invite.code
+          ? `Code ${invite.code}`
+          : "Waiting for your rival";
+      set({
+        ...emptyBattle,
+        isWaitingInvite: true,
+        isLive: true,
+        subject: invite.subject_id,
+        ageGroup: invite.age_band,
+        inviteId: invite.id,
+        inviteCode: invite.code,
+        inviteLabel: label,
+        error: null,
+      });
+      live = new LiveSession(apply, get);
+      void live.watchInvite(invite).catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : "Could not watch that challenge.";
+        set({
+          isWaitingInvite: false,
+          error: message,
+        });
+      });
+    },
+
     submitAnswer: (index: number) => {
       const state = get();
       if (state.hasAnswered) return;
@@ -526,6 +643,10 @@ export function createBattleActions(
         window.clearTimeout(botTimer);
         botTimer = null;
       }
+      const inviteId = get().inviteId;
+      if (inviteId) {
+        void rpcCancelInvite(inviteId).catch(() => undefined);
+      }
       if (live) {
         void rpcCancelMatchmaking().catch(() => undefined);
       }
@@ -537,6 +658,10 @@ export function createBattleActions(
       if (botTimer) {
         window.clearTimeout(botTimer);
         botTimer = null;
+      }
+      const inviteId = get().inviteId;
+      if (inviteId && get().isWaitingInvite) {
+        void rpcCancelInvite(inviteId).catch(() => undefined);
       }
       if (live) {
         void rpcCancelMatchmaking().catch(() => undefined);

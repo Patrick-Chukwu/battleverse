@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, LayoutGroup, type Variants } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 import { subjects, type Subject } from "@/data/quizData";
 import { useBattleStore } from "@/store/useBattleStore";
-import { useGameStore } from "@/store/gameStore";
+import { defaultProfile, useGameStore } from "@/store/gameStore";
 import { useSession } from "@/hooks/useSession";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
-import { isLiveBattleEnabled } from "@/lib/flags";
+import { isInvitesEnabled, isLiveBattleEnabled } from "@/lib/flags";
+import { rpcRedeemInviteCode } from "@/lib/invite-api";
+import { inviteShareUrl } from "@/lib/invite-search";
+import { ChallengeSheet } from "@/components/invite/ChallengeSheet";
 import { 
   Swords, 
   ChevronRight, 
@@ -18,7 +22,9 @@ import {
   Lightbulb,
   Sparkles,
   Zap,
-  ShieldCheck
+  ShieldCheck,
+  Copy,
+  UserPlus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -31,18 +37,50 @@ const AGE_GROUPS = [
 
 const BattlePage = () => {
   const navigate = useNavigate();
-  const { profile, addXp } = useGameStore();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const profile = useGameStore((s) => s.profile) ?? defaultProfile;
+  const addXp = useGameStore((s) => s.addXp);
   const battle = useBattleStore();
   const { data: session } = useSession();
   const online = useOnlineStatus();
   const live = isLiveBattleEnabled();
+  const invites = isInvitesEnabled();
   const signedIn = Boolean(session);
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [selectedAge, setSelectedAge] = useState<string>("9-12");
+  const [challengeOpen, setChallengeOpen] = useState(false);
   const roundCount = Math.max(battle.battleQuestions.length, 1);
   const canEnterLive = !live || (online && signedIn);
   const enterDisabled = !selectedSubject || !canEnterLive;
+  const challengeDisabled = !selectedSubject || !invites || !signedIn;
   const awardedLocalXp = useRef(false);
+  const joiningCode = useRef<string | null>(null);
+  const joinBattle = battle.joinBattle;
+  const busyInArena = battle.isPlaying || battle.isWaitingInvite || battle.isSearching;
+
+  useEffect(() => {
+    const code = searchParams.get("code");
+    if (!code || !invites) return;
+    if (!signedIn) {
+      toast.message("Sign in to join this challenge.");
+      return;
+    }
+    if (!online) {
+      toast.error("You need a connection to join a challenge.");
+      return;
+    }
+    if (joiningCode.current === code || busyInArena) return;
+    joiningCode.current = code;
+    void rpcRedeemInviteCode(code)
+      .then((invite) => {
+        if (invite.battle_id) joinBattle(invite.battle_id);
+        setSearchParams({}, { replace: true });
+      })
+      .catch((err: unknown) => {
+        joiningCode.current = null;
+        toast.error(err instanceof Error ? err.message : "Could not join that invite.");
+      });
+  }, [busyInArena, invites, joinBattle, online, searchParams, setSearchParams, signedIn]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -80,6 +118,65 @@ const BattlePage = () => {
       <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-game-orange/5 rounded-full blur-[100px] animate-float" />
     </div>
   );
+
+  // State A0: Waiting on a directed challenge
+  if (battle.isWaitingInvite && !battle.isPlaying && !battle.isFinished) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[#050505] p-6 text-white">
+        <BackgroundDecorator />
+        <motion.div className="relative flex aspect-square w-full max-w-md items-center justify-center">
+          {[1, 1.5, 2].map((scale, i) => (
+            <motion.div
+              key={i}
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: scale * 2, opacity: [0, 0.2, 0] }}
+              transition={{ repeat: Infinity, duration: 3, delay: i * 0.5 }}
+              className="absolute inset-0 rounded-full border-2 border-white/20"
+            />
+          ))}
+          <div className="z-10 flex items-center gap-12">
+            <div className="flex h-32 w-32 items-center justify-center rounded-[2.5rem] border border-white/20 bg-white/10 text-6xl shadow-2xl backdrop-blur-2xl">
+              {profile.avatar}
+            </div>
+            <div className="text-4xl font-black italic tracking-tighter text-white/40">VS</div>
+            <div className="flex h-32 w-32 items-center justify-center rounded-[2.5rem] border border-dashed border-white/10 bg-white/5 text-6xl shadow-2xl backdrop-blur-xl">
+              🎯
+            </div>
+          </div>
+        </motion.div>
+        <div className="mt-12 text-center">
+          <h2 className="mb-2 text-3xl font-black tracking-tight">
+            {battle.inviteLabel ?? "WAITING FOR YOUR RIVAL"}
+          </h2>
+          <p className="text-sm font-bold uppercase tracking-[0.3em] text-white/40">
+            Challenge invite · 10 minute window
+          </p>
+          {battle.inviteCode && (
+            <div className="mt-6 flex flex-col items-center gap-3">
+              <p className="font-black tracking-[0.4em] text-white">{battle.inviteCode}</p>
+              <Button
+                type="button"
+                variant="ctaSecondary"
+                onClick={() => {
+                  const url = inviteShareUrl(battle.inviteCode as string);
+                  void navigator.clipboard.writeText(url).then(
+                    () => toast.success("Invite link copied."),
+                    () => toast.message(url)
+                  );
+                }}
+              >
+                <Copy className="mr-2 h-4 w-4" />
+                Copy link
+              </Button>
+            </div>
+          )}
+          <Button onClick={() => battle.cancelSearch()} variant="ctaSecondary" className="mt-8">
+            CANCEL CHALLENGE
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   // State A: Setup Menu
   if (!battle.isPlaying && !battle.isSearching && !battle.isFinished) {
@@ -175,6 +272,23 @@ const BattlePage = () => {
               </div>
             </section>
 
+            {invites && (
+              <motion.div whileHover={challengeDisabled || !online ? undefined : { scale: 1.03 }} whileTap={challengeDisabled || !online ? undefined : { scale: 0.97 }}>
+                <Button
+                  disabled={challengeDisabled}
+                  onClick={() => setChallengeOpen(true)}
+                  variant="ctaSecondary"
+                  size="xl"
+                  className="relative w-full py-5 text-lg disabled:opacity-50"
+                >
+                  <span className="flex items-center gap-3">
+                    <UserPlus className="h-6 w-6" />
+                    CHALLENGE A RIVAL
+                  </span>
+                </Button>
+              </motion.div>
+            )}
+
             <motion.div whileHover={enterDisabled ? undefined : { scale: 1.05 }} whileTap={enterDisabled ? undefined : { scale: 0.95 }}>
               <Button
                 disabled={enterDisabled}
@@ -194,6 +308,17 @@ const BattlePage = () => {
                 </span>
               </Button>
             </motion.div>
+            {invites && (
+              <p className="text-center text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                Matchmaking is the fallback if nobody you know is around
+              </p>
+            )}
+            <ChallengeSheet
+              open={challengeOpen}
+              onOpenChange={setChallengeOpen}
+              subject={selectedSubject}
+              ageBand={selectedAge}
+            />
             {live && !online && (
               <p className="text-center text-sm font-bold text-muted-foreground">
                 You need a connection to enter a live battle. Bots are not used as a fallback.
@@ -204,7 +329,12 @@ const BattlePage = () => {
                 <Link to="/login" className="text-primary underline">
                   Sign in
                 </Link>{" "}
-                to find a real rival. Guest play stays on Practice.
+                to find a real rival or send a challenge. Guest play stays on Practice.
+              </p>
+            )}
+            {invites && signedIn && !online && (
+              <p className="text-center text-sm font-bold text-muted-foreground">
+                Challenges need a connection. You can still queue a named invite from Challenge.
               </p>
             )}
             {battle.error && (

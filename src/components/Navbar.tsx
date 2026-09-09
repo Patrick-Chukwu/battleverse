@@ -1,17 +1,20 @@
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useGameStore } from "@/store/gameStore";
-import { Home, Trophy, User, Zap } from "lucide-react";
+import { defaultProfile, useGameStore } from "@/store/gameStore";
+import { Home, Swords, Trophy, User, Zap } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { useSession } from "@/hooks/useSession";
 import { signOut } from "@/hooks/useProfile";
-import { isSupabaseConfigured } from "@/lib/flags";
+import { useInviteInbox } from "@/hooks/useInviteInbox";
+import { isInvitesEnabled, isSupabaseConfigured } from "@/lib/flags";
 
 export function Navbar() {
-  const { profile } = useGameStore();
+  const profile = useGameStore((s) => s.profile) ?? defaultProfile;
   const { data: session } = useSession();
   const navigate = useNavigate();
   const showAuth = isSupabaseConfigured();
+  const { pendingCount } = useInviteInbox();
+  const showInvites = isInvitesEnabled() && Boolean(session);
 
   const links = [
     { to: "/", icon: Home, label: "Home" },
@@ -46,6 +49,21 @@ export function Navbar() {
               <span className="hidden sm:inline">{link.label}</span>
             </NavLink>
           ))}
+          {showInvites && (
+            <NavLink
+              to="/battle"
+              className="relative flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-bold text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
+              activeClassName="bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary"
+            >
+              <Swords className="h-5 w-5" />
+              <span className="hidden sm:inline">Arena</span>
+              {pendingCount > 0 && (
+                <span className="absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-black text-primary-foreground">
+                  {pendingCount}
+                </span>
+              )}
+            </NavLink>
+          )}
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">

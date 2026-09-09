@@ -31,7 +31,7 @@ export function OfflineBanner() {
   return (
     <div className="fixed top-[66px] right-0 left-0 z-40 border-b border-border bg-card/95 px-4 py-2 text-center text-sm font-bold shadow-sm backdrop-blur">
       {!online ? (
-        <span>You are offline. Practice still works with saved questions.</span>
+        <span>You are offline. Practice still works with saved questions. Challenges need a connection or will queue.</span>
       ) : (
         <span>
           {pending} result{pending === 1 ? "" : "s"} waiting to sync.{" "}

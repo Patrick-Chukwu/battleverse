@@ -1,7 +1,7 @@
 import Dexie, { type Table } from "dexie";
 import type { Question, Subject } from "@/data/quizData";
 
-export type OutboxType = "attempt" | "finish";
+export type OutboxType = "attempt" | "finish" | "invite_send";
 export type SyncStatus = "pending" | "synced" | "error";
 
 export interface CachedQuestion {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useGameStore } from "@/store/gameStore";
+import { defaultProfile, useGameStore } from "@/store/gameStore";
 import { badges as badgeCatalog, getLevel } from "@/data/gameData";
 import { Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -10,7 +10,7 @@ import { useSession } from "@/hooks/useSession";
 import { isSupabaseConfigured } from "@/lib/flags";
 
 const ProfilePage = () => {
-  const { profile } = useGameStore();
+  const profile = useGameStore((s) => s.profile) ?? defaultProfile;
   const { data: session } = useSession();
   const [editOpen, setEditOpen] = useState(false);
   const levelInfo = getLevel(profile.xp);
@@ -32,7 +32,7 @@ const ProfilePage = () => {
     name: badge.name,
     desc: badge.description,
     icon: badge.emoji,
-    unlocked: profile.earnedBadges.includes(badge.id),
+    unlocked: (profile.earnedBadges ?? []).includes(badge.id),
   }));
 
   return (

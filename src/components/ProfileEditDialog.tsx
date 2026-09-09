@@ -12,11 +12,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { avatars } from "@/data/gameData";
 import { useGameStore } from "@/store/gameStore";
-import { isServerProfileEnabled } from "@/lib/flags";
+import { isInvitesEnabled, isServerProfileEnabled } from "@/lib/flags";
 import { usernameError } from "@/lib/username";
+import { rpcSetFindablePhone } from "@/lib/invite-api";
 import { useSession } from "@/hooks/useSession";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
+import type { AgeBand } from "@/lib/database.types";
 import { cn } from "@/lib/utils";
+
+const AGE_BANDS: { id: AgeBand; label: string }[] = [
+  { id: "6-8", label: "6–8" },
+  { id: "9-12", label: "9–12" },
+  { id: "13-16", label: "13–16" },
+  { id: "16plus", label: "16+" },
+];
 
 interface ProfileEditDialogProps {
   open: boolean;
@@ -31,12 +40,16 @@ export function ProfileEditDialog({ open, onOpenChange }: ProfileEditDialogProps
   const [name, setNameLocal] = useState(profile.name);
   const [avatar, setAvatarLocal] = useState(profile.avatar);
   const [discoverable, setDiscoverable] = useState(false);
+  const [ageBand, setAgeBand] = useState<AgeBand | null>(null);
+  const [phone, setPhone] = useState("");
 
   const onOpen = (next: boolean) => {
     if (next) {
       setNameLocal(profile.name);
       setAvatarLocal(profile.avatar);
       setDiscoverable(serverProfile?.discoverable ?? false);
+      setAgeBand(serverProfile?.age_band ?? null);
+      setPhone("");
     }
     onOpenChange(next);
   };
@@ -57,7 +70,11 @@ export function ProfileEditDialog({ open, onOpenChange }: ProfileEditDialogProps
           username: name.trim(),
           avatar,
           discoverable,
+          age_band: ageBand,
         });
+        if (isInvitesEnabled() && phone.trim()) {
+          await rpcSetFindablePhone(phone.trim());
+        }
         toast.success("Profile saved to your account.");
       } catch (e) {
         const message = e instanceof Error ? e.message : "Could not save.";
@@ -117,15 +134,50 @@ export function ProfileEditDialog({ open, onOpenChange }: ProfileEditDialogProps
             </div>
           </div>
           {session && (
-            <label className="flex items-center gap-2 text-sm font-bold">
-              <input
-                type="checkbox"
-                checked={discoverable}
-                onChange={(e) => setDiscoverable(e.target.checked)}
-                className="size-4 accent-primary"
-              />
-              Let others find me by username (off by default)
-            </label>
+            <div className="space-y-3">
+              <p className="text-sm font-black">Age band</p>
+              <div className="flex flex-wrap gap-2">
+                {AGE_BANDS.map((b) => (
+                  <button
+                    key={b.id}
+                    type="button"
+                    onClick={() => setAgeBand(b.id)}
+                    className={cn(
+                      "rounded-xl px-3 py-1.5 text-sm font-black",
+                      ageBand === b.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                    )}
+                  >
+                    {b.label}
+                  </button>
+                ))}
+              </div>
+              <label className="flex items-center gap-2 text-sm font-bold">
+                <input
+                  type="checkbox"
+                  checked={discoverable}
+                  onChange={(e) => setDiscoverable(e.target.checked)}
+                  className="size-4 accent-primary"
+                />
+                Let others find me (off by default). Under-13 stays hidden from email/phone search.
+              </label>
+              {isInvitesEnabled() && (
+                <div className="space-y-2">
+                  <Label htmlFor="profile-phone" className="font-black">
+                    Phone for findability (optional)
+                  </Label>
+                  <Input
+                    id="profile-phone"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+234…"
+                    className="h-12 rounded-2xl px-4 font-bold"
+                  />
+                  <p className="text-xs font-bold text-muted-foreground">
+                    Stored as a hash only. Friends must type the same number. Leave blank to keep the current value.
+                  </p>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
