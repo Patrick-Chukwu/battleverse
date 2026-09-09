@@ -5,7 +5,7 @@ import { subjects } from "@/data/quizData";
 import { defaultProfile, useGameStore } from "@/store/gameStore";
 import { getLevel } from "@/data/gameData";
 import { Swords, BookOpen, ArrowRight, ClipboardList } from "lucide-react";
-import { isExamModesEnabled } from "@/lib/flags";
+import { isExamModesEnabled, isSupabaseConfigured } from "@/lib/flags";
 import { cn } from "@/lib/utils";
 
 const subjectHover: Record<string, string> = {
@@ -18,6 +18,7 @@ const subjectHover: Record<string, string> = {
 const HomePage = () => {
   const navigate = useNavigate();
   const showExams = isExamModesEnabled();
+  const backendReady = isSupabaseConfigured();
   const profile = useGameStore((s) => s.profile) ?? defaultProfile;
   const levelInfo = getLevel(profile.xp);
 
@@ -30,6 +31,13 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-background pt-[66px]">
+      {!backendReady && (
+        <div className="relative z-30 border-b border-border bg-card/95 px-4 py-3 text-center text-sm font-bold text-muted-foreground">
+          This deploy has no Supabase keys, so it is guest-only (local quizzes, mock leaderboard, no sign-in).
+          Set <code className="font-black text-foreground">VITE_SUPABASE_URL</code> and{" "}
+          <code className="font-black text-foreground">VITE_SUPABASE_ANON_KEY</code> on Vercel, then Redeploy.
+        </div>
+      )}
       <section className="relative flex min-h-[75vh] items-center justify-center overflow-hidden">
         <FloatingIcons />
 
@@ -87,7 +95,7 @@ const HomePage = () => {
               <BookOpen className="h-6 w-6" />
               Practice Solo
             </motion.button>
-            {showExams && (
+            {(showExams || !backendReady) && (
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

@@ -93,7 +93,7 @@ export function Navbar() {
               {profile.name}
             </span>
           </Link>
-          {showAuth && !session && (
+          {!session && (
             <Link
               to="/login"
               className="hidden rounded-xl px-3 py-1.5 text-sm font-black text-primary sm:inline"
