@@ -1,0 +1,21 @@
+prompt,option_a,option_b,option_c,option_d,correct_index,explanation,subject,difficulty,age_band,exam_type,topic
+What is 4 + 5?,8,9,10,7,1,4 + 5 = 9,math,easy,6-8,casual,addition
+What is 7 × 3?,21,24,18,10,0,7 × 3 = 21,math,easy,6-8,casual,multiplication
+A square has how many sides?,3,4,5,6,1,A square has four equal sides,math,easy,6-8,casual,shapes
+What is 100 ÷ 4?,20,25,30,40,1,100 ÷ 4 = 25,math,medium,9-12,casual,division
+Solve 2x = 16,6,8,10,32,1,Divide both sides by 2,math,hard,13-16,jamb,algebra
+What does CPU stand for?,Central Processing Unit,Computer Power Utility,Core Print Unit,Control Panel User,0,The CPU is the processor,tech,easy,6-8,casual,hardware
+Which is a programming language?,Excel,Python,Chrome,Wi-Fi,1,Python is a language used to write programs,tech,easy,6-8,casual,coding
+What does URL stand for?,Uniform Resource Locator,User Random List,United Router Line,Universal Remote Link,0,A URL is a web address,tech,medium,9-12,casual,web
+What is debugging?,Adding bugs,Finding and fixing errors,Deleting files,Painting icons,1,Debugging means fixing mistakes in code,tech,medium,9-12,casual,coding
+What is an algorithm?,A website,Step-by-step instructions,A battery,A speaker,1,An algorithm is a recipe for solving a problem,tech,hard,13-16,waec,coding
+What does AI stand for?,Awesome Internet,Artificial Intelligence,Automatic Input,Advanced Information,1,AI means Artificial Intelligence,ai,easy,6-8,casual,basics
+A voice assistant is an example of?,A bicycle,AI,A light bulb,A kettle,1,Voice assistants use AI to understand speech,ai,easy,6-8,casual,basics
+What is a dataset?,A single password,A collection of training examples,A robot joint,The Wi-Fi name,1,Models learn from many examples,ai,medium,9-12,casual,ml
+What is a prompt in generative AI?,The instruction you give the model,A type of battery,The cooling fan,A printed coupon,0,A prompt steers what the model writes,ai,hard,13-16,jamb,genai
+Why can AI be biased?,Computers pick favourite colours,Training data can encode unfair patterns,Bias only exists in printers,They refuse numbers,1,Unfair data can be copied by a model,ai,hard,13-16,waec,ethics
+The capital of Nigeria is?,Lagos,Abuja,Kano,Ibadan,1,Abuja is the capital city,general,easy,6-8,casual,civics
+Water freezes at what Celsius temperature?,0,10,32,100,0,Pure water freezes at 0°C,general,easy,6-8,casual,science
+Which planet is known as the Red Planet?,Venus,Mars,Jupiter,Saturn,1,Mars looks reddish,general,medium,9-12,casual,space
+Photosynthesis mainly happens in?,Roots,Leaves,Flowers,Seeds,1,Leaves use light to make food,general,medium,9-12,waec,biology
+The chemical symbol for water is?,CO2,H2O,O2,NaCl,1,Water is H2O,general,hard,13-16,jamb,chemistry

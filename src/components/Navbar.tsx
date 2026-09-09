@@ -1,20 +1,22 @@
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { defaultProfile, useGameStore } from "@/store/gameStore";
-import { Home, Swords, Trophy, User, Zap } from "lucide-react";
+import { Home, Settings2, Swords, Trophy, User, Zap } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { useSession } from "@/hooks/useSession";
-import { signOut } from "@/hooks/useProfile";
+import { signOut, useProfile } from "@/hooks/useProfile";
 import { useInviteInbox } from "@/hooks/useInviteInbox";
 import { isInvitesEnabled, isSupabaseConfigured } from "@/lib/flags";
 
 export function Navbar() {
   const profile = useGameStore((s) => s.profile) ?? defaultProfile;
   const { data: session } = useSession();
+  const { data: serverProfile } = useProfile();
   const navigate = useNavigate();
   const showAuth = isSupabaseConfigured();
   const { pendingCount } = useInviteInbox();
   const showInvites = isInvitesEnabled() && Boolean(session);
+  const showAdmin = serverProfile?.role === "admin";
 
   const links = [
     { to: "/", icon: Home, label: "Home" },
@@ -49,6 +51,16 @@ export function Navbar() {
               <span className="hidden sm:inline">{link.label}</span>
             </NavLink>
           ))}
+          {showAdmin && (
+            <NavLink
+              to="/admin"
+              className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-bold text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
+              activeClassName="bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary"
+            >
+              <Settings2 className="h-5 w-5" />
+              <span className="hidden sm:inline">Admin</span>
+            </NavLink>
+          )}
           {showInvites && (
             <NavLink
               to="/battle"

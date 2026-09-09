@@ -4,7 +4,8 @@ import { FloatingIcons } from "@/components/FloatingIcons";
 import { subjects } from "@/data/quizData";
 import { defaultProfile, useGameStore } from "@/store/gameStore";
 import { getLevel } from "@/data/gameData";
-import { Swords, BookOpen, ArrowRight } from "lucide-react";
+import { Swords, BookOpen, ArrowRight, ClipboardList } from "lucide-react";
+import { isExamModesEnabled } from "@/lib/flags";
 import { cn } from "@/lib/utils";
 
 const subjectHover: Record<string, string> = {
@@ -16,6 +17,7 @@ const subjectHover: Record<string, string> = {
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const showExams = isExamModesEnabled();
   const profile = useGameStore((s) => s.profile) ?? defaultProfile;
   const levelInfo = getLevel(profile.xp);
 
@@ -85,6 +87,17 @@ const HomePage = () => {
               <BookOpen className="h-6 w-6" />
               Practice Solo
             </motion.button>
+            {showExams && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/exams")}
+                className="flex items-center justify-center gap-2 rounded-2xl border-2 border-border bg-card px-8 py-4 text-lg font-black text-foreground transition-all hover:border-primary/30 hover:bg-primary/5"
+              >
+                <ClipboardList className="h-6 w-6" />
+                Exam papers
+              </motion.button>
+            )}
           </motion.div>
         </div>
       </section>

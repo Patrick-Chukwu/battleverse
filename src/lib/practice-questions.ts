@@ -1,4 +1,5 @@
 import { getQuestionsBySubject, questions as bundled, shuffleArray, type Question, type Subject } from "@/data/quizData";
+import { staleCachedQuestionIds } from "@/lib/admin-import";
 import { isDexieQuestionsEnabled } from "@/lib/flags";
 import { offlineDb, type CachedQuestion } from "@/lib/offline-db";
 
@@ -46,7 +47,8 @@ export async function cacheServerQuestions(
     difficulty: Question["difficulty"];
     age_band: Question["ageGroup"];
     updated_at?: string;
-  }>
+  }>,
+  opts: { replaceAll?: boolean } = {},
 ): Promise<void> {
   const now = new Date().toISOString();
   await offlineDb.questions.bulkPut(
@@ -62,7 +64,12 @@ export async function cacheServerQuestions(
       updatedAt: q.updated_at ?? now,
     }))
   );
-  await offlineDb.meta.put({ key: "lastSyncAt", value: now });
+  if (opts.replaceAll !== false) {
+    const cachedIds = (await offlineDb.questions.toArray()).map((q) => q.id);
+    const stale = staleCachedQuestionIds(cachedIds, rows.map((q) => q.id));
+    if (stale.length > 0) await offlineDb.questions.bulkDelete(stale);
+    await offlineDb.meta.put({ key: "lastSyncAt", value: now });
+  }
 }
 
 export async function loadPracticeQuestions(subjectId: Subject, count = 8): Promise<Question[]> {

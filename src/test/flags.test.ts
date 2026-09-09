@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  isExamModesEnabled,
   isInvitesEnabled,
   isLiveBattleEnabled,
   isServerProfileEnabled,
@@ -18,6 +19,7 @@ describe("flags", () => {
     expect(isServerProfileEnabled()).toBe(false);
     expect(isLiveBattleEnabled()).toBe(false);
     expect(isInvitesEnabled()).toBe(false);
+    expect(isExamModesEnabled()).toBe(false);
   });
 
   it("turns invites off when live battle is off", () => {
@@ -33,5 +35,12 @@ describe("flags", () => {
     vi.stubEnv("VITE_USE_LIVE_BATTLE", "true");
     vi.stubEnv("VITE_USE_INVITES", "");
     expect(isInvitesEnabled()).toBe(true);
+  });
+
+  it("defaults exam modes on when Supabase is configured", () => {
+    vi.stubEnv("VITE_SUPABASE_URL", "https://example.supabase.co");
+    vi.stubEnv("VITE_SUPABASE_ANON_KEY", "anon");
+    vi.stubEnv("VITE_USE_EXAM_MODES", "");
+    expect(isExamModesEnabled()).toBe(true);
   });
 });

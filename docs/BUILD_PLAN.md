@@ -170,7 +170,8 @@ Practice still ignores live Battle.
 ## Phase 5 — Admin CMS
 
 **Effort: L**  
-**Depends on:** Phase 1–2 (questions live in Postgres). Can parallelize UI after Phase 2.
+**Depends on:** Phase 1–2 (questions live in Postgres). Can parallelize UI after Phase 2.  
+**Setup:** [docs/PHASE5.md](./PHASE5.md) — run `0005_admin_rpcs.sql`, promote one profile to `admin`.
 
 ### What gets built
 
@@ -201,7 +202,8 @@ Practice still ignores live Battle.
 ## Phase 6 — Exam-specific modes
 
 **Effort: M**  
-**Depends on:** Phase 5 tagging + custom tests.
+**Depends on:** Phase 5 tagging + custom tests.  
+**Setup:** [docs/PHASE6.md](./PHASE6.md) — run `0006_exam_rpcs.sql`.
 
 ### What gets built
 
@@ -245,6 +247,7 @@ Practice still ignores live Battle.
 | `VITE_USE_DEXIE_QUESTIONS` | Phase 2 |
 | `VITE_USE_LIVE_BATTLE` | Phase 3 |
 | `VITE_USE_INVITES` | Phase 4 |
+| `VITE_USE_EXAM_MODES` | Phase 6 |
 
 When a flag is off, current prototype behavior remains (bots, `quizData.ts`, mock LB).
 
