@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, LayoutGroup, type Variants } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { subjects, type Subject } from "@/data/quizData";
 import { useBattleStore } from "@/store/useBattleStore";
 import { useGameStore } from "@/store/gameStore";
+import { useSession } from "@/hooks/useSession";
+import { useOnlineStatus } from "@/hooks/useOnlineStatus";
+import { isLiveBattleEnabled } from "@/lib/flags";
 import { 
   Swords, 
   ChevronRight, 
@@ -30,27 +33,37 @@ const BattlePage = () => {
   const navigate = useNavigate();
   const { profile, addXp } = useGameStore();
   const battle = useBattleStore();
-  
+  const { data: session } = useSession();
+  const online = useOnlineStatus();
+  const live = isLiveBattleEnabled();
+  const signedIn = Boolean(session);
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [selectedAge, setSelectedAge] = useState<string>("9-12");
+  const roundCount = Math.max(battle.battleQuestions.length, 1);
+  const canEnterLive = !live || (online && signedIn);
+  const enterDisabled = !selectedSubject || !canEnterLive;
+  const awardedLocalXp = useRef(false);
 
-  // Timer effect
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
-    if (battle.isPlaying && !battle.hasAnswered && battle.currentQuestionIndex < 5) {
+    if (battle.isPlaying && !battle.isFinished) {
       interval = setInterval(() => {
         battle.tickTimer();
       }, 100);
     }
     return () => clearInterval(interval);
-  }, [battle.isPlaying, battle.hasAnswered, battle.currentQuestionIndex, battle.tickTimer]);
+  }, [battle.isPlaying, battle.isFinished, battle.tickTimer]);
 
-  // Handle XP addition
   useEffect(() => {
-    if (battle.isPlaying && battle.currentQuestionIndex === 5) {
-      addXp(battle.score);
+    if (battle.isLive) return;
+    if (!battle.isFinished) {
+      awardedLocalXp.current = false;
+      return;
     }
-  }, [battle.isPlaying, battle.currentQuestionIndex, battle.score, addXp]);
+    if (awardedLocalXp.current) return;
+    awardedLocalXp.current = true;
+    addXp(battle.score);
+  }, [battle.isLive, battle.isFinished, battle.score, addXp]);
 
   const containerVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
@@ -69,7 +82,7 @@ const BattlePage = () => {
   );
 
   // State A: Setup Menu
-  if (!battle.isPlaying && !battle.isSearching && battle.currentQuestionIndex !== 5) {
+  if (!battle.isPlaying && !battle.isSearching && !battle.isFinished) {
     return (
       <div className="relative min-h-screen overflow-hidden bg-background pt-28 pb-20">
         <BackgroundDecorator />
@@ -162,9 +175,9 @@ const BattlePage = () => {
               </div>
             </section>
 
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <motion.div whileHover={enterDisabled ? undefined : { scale: 1.05 }} whileTap={enterDisabled ? undefined : { scale: 0.95 }}>
               <Button
-                disabled={!selectedSubject}
+                disabled={enterDisabled}
                 onClick={() => selectedSubject && battle.startSearch(selectedSubject, selectedAge)}
                 variant="cta"
                 size="xl"
@@ -181,6 +194,22 @@ const BattlePage = () => {
                 </span>
               </Button>
             </motion.div>
+            {live && !online && (
+              <p className="text-center text-sm font-bold text-muted-foreground">
+                You need a connection to enter a live battle. Bots are not used as a fallback.
+              </p>
+            )}
+            {live && online && !signedIn && (
+              <p className="text-center text-sm font-bold text-muted-foreground">
+                <Link to="/login" className="text-primary underline">
+                  Sign in
+                </Link>{" "}
+                to find a real rival. Guest play stays on Practice.
+              </p>
+            )}
+            {battle.error && (
+              <p className="text-center text-sm font-bold text-destructive">{battle.error}</p>
+            )}
           </div>
         </div>
       </div>
@@ -255,14 +284,23 @@ const BattlePage = () => {
           >
             SCANNING FOR RIVALS
           </motion.h2>
-          <p className="font-bold text-white/40 uppercase tracking-[0.3em] text-sm">Synchronizing Cloud State</p>
+          <p className="font-bold text-white/40 uppercase tracking-[0.3em] text-sm">
+            {battle.isLive ? "Waiting for a human rival" : "Synchronizing Cloud State"}
+          </p>
+          <Button
+            onClick={() => battle.cancelSearch()}
+            variant="ctaSecondary"
+            className="mt-8"
+          >
+            CANCEL
+          </Button>
         </div>
       </div>
     );
   }
 
   // State D: Results Screen
-  if (battle.currentQuestionIndex === 5) {
+  if (battle.isFinished) {
     const allParticipants = [
       { name: profile.name, avatar: profile.avatar, score: battle.score, isPlayer: true },
       ...battle.rivals.map(r => ({ ...r, isPlayer: false }))
@@ -307,6 +345,11 @@ const BattlePage = () => {
             <p className="text-muted-foreground font-black uppercase tracking-[0.4em] mb-12">
               Arena Standing: Rank #{playerRank}
             </p>
+            {battle.opponentLeft && (
+              <p className="mb-8 text-sm font-bold text-muted-foreground">
+                Your opponent left the arena. This match is a forfeit.
+              </p>
+            )}
 
             <div className="glass-card mb-10 overflow-hidden rounded-3xl p-4">
               <div className="space-y-3">
@@ -384,6 +427,11 @@ const BattlePage = () => {
       <BackgroundDecorator />
       <div className="container mx-auto px-6 max-w-2xl relative z-10">
         <LayoutGroup>
+          {battle.reconnectSeconds !== null && battle.reconnectSeconds > 0 && (
+            <p className="mb-4 text-center text-sm font-black uppercase tracking-widest text-amber-600">
+              Opponent reconnecting · {battle.reconnectSeconds}s
+            </p>
+          )}
           {/* Header Scoreboard - Floating Glass */}
           <motion.div 
             layout
@@ -432,7 +480,7 @@ const BattlePage = () => {
                 <div className="h-1.5 w-12 bg-primary/10 rounded-full overflow-hidden">
                   <motion.div 
                     initial={{ width: 0 }}
-                    animate={{ width: `${((battle.currentQuestionIndex + 1) / 5) * 100}%` }}
+                    animate={{ width: `${((battle.currentQuestionIndex + 1) / roundCount) * 100}%` }}
                     className="h-full bg-primary"
                   />
                 </div>
@@ -524,7 +572,7 @@ const BattlePage = () => {
               <motion.div 
                 className={cn("h-full rounded-full bg-gradient-to-r transition-all duration-100 opacity-60", timerColor)}
                 initial={{ width: "100%" }}
-                animate={{ width: `${(battle.timer / 10) * 100}%` }}
+                animate={{ width: `${(battle.timer / (battle.questionDurationMs / 1000 || 10)) * 100}%` }}
               />
             </div>
 
@@ -544,12 +592,18 @@ const BattlePage = () => {
                       {currentQuestion.explanation}
                     </p>
                   </div>
-                  <Button
-                    onClick={() => battle.nextQuestion()}
-                    className="h-16 w-16 rounded-[2rem] bg-white text-primary hover:bg-white/90 shadow-xl group-hover:scale-105 transition-all p-0 mr-2"
-                  >
-                    <ChevronRight className="w-8 h-8" />
-                  </Button>
+                  {battle.isLive ? (
+                    <div className="mr-4 pr-2 text-right text-xs font-black uppercase tracking-widest text-primary-foreground/80">
+                      {battle.timer > 0 ? "Waiting for the round clock" : "Next round incoming"}
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={() => battle.nextQuestion()}
+                      className="h-16 w-16 rounded-[2rem] bg-white text-primary hover:bg-white/90 shadow-xl group-hover:scale-105 transition-all p-0 mr-2"
+                    >
+                      <ChevronRight className="w-8 h-8" />
+                    </Button>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>

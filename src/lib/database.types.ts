@@ -1,5 +1,6 @@
 export type AgeBand = "6-8" | "9-12" | "13-16" | "16plus";
 export type UserRole = "player" | "admin";
+export type BattleStatus = "waiting" | "active" | "complete" | "forfeit";
 
 export interface ProfileRow {
   id: string;

@@ -10,7 +10,7 @@ Default magic-link email is unchanged. Do not set up custom SMTP — click the S
 - Profile badges read `earnedBadges` (and server `user_badges` when signed in)
 - PWA app-shell cache on production builds only
 
-Guest Practice still works with no account. Battle bots are unchanged.
+Guest Practice still works with no account. Live battles land in Phase 3 (`docs/PHASE3.md`); bots remain if `VITE_USE_LIVE_BATTLE=false`.
 
 ## SQL you must run (once)
 

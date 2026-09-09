@@ -17,3 +17,9 @@ export function isDexieQuestionsEnabled(): boolean {
   if (!isSupabaseConfigured()) return false;
   return import.meta.env.VITE_USE_DEXIE_QUESTIONS !== "false";
 }
+
+/** Live matchmaking + realtime rooms. Default on when Supabase is configured. Off → local bots. */
+export function isLiveBattleEnabled(): boolean {
+  if (!isSupabaseConfigured()) return false;
+  return import.meta.env.VITE_USE_LIVE_BATTLE !== "false";
+}
