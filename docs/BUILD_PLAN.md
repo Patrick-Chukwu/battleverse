@@ -170,7 +170,8 @@ Practice still ignores live Battle.
 ## Phase 5 — Admin CMS
 
 **Effort: L**  
-**Depends on:** Phase 1–2 (questions live in Postgres). Can parallelize UI after Phase 2.
+**Depends on:** Phase 1–2 (questions live in Postgres). Can parallelize UI after Phase 2.  
+**Setup:** [docs/PHASE5.md](./PHASE5.md) — run `0005_admin_rpcs.sql`, promote one profile to `admin`.
 
 ### What gets built
 

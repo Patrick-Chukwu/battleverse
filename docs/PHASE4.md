@@ -55,3 +55,5 @@ Email hash is already written at signup.
 ## Flag
 
 `VITE_USE_INVITES` defaults on when live battle is on. Set it to `false` to hide Challenge UI while keeping matchmaking.
+
+Admin CMS (publish questions, CSV import, custom tests) is Phase 5 — see [PHASE5.md](./PHASE5.md).

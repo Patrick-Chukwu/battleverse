@@ -6,7 +6,7 @@ export interface Question {
   explanation: string;
   subject: Subject;
   difficulty: "easy" | "medium" | "hard";
-  ageGroup: "6-8" | "9-12" | "13-16";
+  ageGroup: "6-8" | "9-12" | "13-16" | "16plus";
 }
 
 export type Subject = "tech" | "ai" | "math" | "general";
