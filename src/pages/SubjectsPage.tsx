@@ -5,7 +5,7 @@ import { subjects, type Subject } from "@/data/quizData";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { lastQuestionSyncAt, subjectPackReady } from "@/lib/practice-questions";
-import { isDexieQuestionsEnabled } from "@/lib/flags";
+import { isDexieQuestionsEnabled, isExamModesEnabled } from "@/lib/flags";
 
 const subjectHover: Record<string, string> = {
   "game-blue": "hover:border-game-blue/30",
@@ -39,6 +39,15 @@ const SubjectsPage = () => {
             <p className="mt-2 text-sm font-bold text-muted-foreground">
               Question pack updated {new Date(syncedAt).toLocaleString()}
             </p>
+          )}
+          {isExamModesEnabled() && (
+            <button
+              type="button"
+              onClick={() => navigate("/exams")}
+              className="mt-4 text-sm font-black text-primary"
+            >
+              Prefer a timed JAMB / WAEC paper? Open exam papers →
+            </button>
           )}
         </motion.div>
 

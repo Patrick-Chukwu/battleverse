@@ -12,7 +12,7 @@ Non-engineers publish into the same Postgres catalog Practice already syncs. Lea
 - Every write lands in `admin_audit`
 - Unpublish: the next Practice pull removes the item from Dexie; an in-flight quiz can finish
 
-Phase 6 (exam modes) will use the tags and custom tests from this CMS — see [BUILD_PLAN.md](./BUILD_PLAN.md).
+Phase 6 (exam modes) uses the tags and custom tests from this CMS — see [PHASE6.md](./PHASE6.md).
 
 ## SQL you must run (once)
 
@@ -25,8 +25,8 @@ Promote one account (replace the username):
 ```sql
 UPDATE public.profiles SET role = 'admin' WHERE username = 'your_username';
 ```
-UPDATE public.profiles SET role = 'admin' WHERE username = 'patrick';
-You do **not** need to re-run `seed.sql`.
+
+You do **not** need to re-run `seed.sql`. Exam papers (taking a JAMB/WAEC mock) are Phase 6 — see [PHASE6.md](./PHASE6.md).
 
 ## How to test
 

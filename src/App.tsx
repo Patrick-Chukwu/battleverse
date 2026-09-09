@@ -12,6 +12,7 @@ import { PracticeSync } from "@/components/PracticeSync";
 import HomePage from "./pages/HomePage";
 import SubjectsPage from "./pages/SubjectsPage";
 import QuizPage from "./pages/QuizPage";
+import ExamsPage from "./pages/ExamsPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import ProfilePage from "./pages/ProfilePage";
 import BattlePage from "./pages/BattlePage";
@@ -37,6 +38,8 @@ const App = () => (
           <Route path="/" element={<HomePage />} />
           <Route path="/subjects" element={<SubjectsPage />} />
           <Route path="/quiz/:subjectId" element={<QuizPage />} />
+          <Route path="/exams" element={<ExamsPage />} />
+          <Route path="/exam/:testId" element={<QuizPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/battle" element={<BattlePage />} />

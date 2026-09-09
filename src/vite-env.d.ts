@@ -8,6 +8,7 @@ interface ImportMetaEnv {
   readonly VITE_USE_DEXIE_QUESTIONS: string;
   readonly VITE_USE_LIVE_BATTLE: string;
   readonly VITE_USE_INVITES: string;
+  readonly VITE_USE_EXAM_MODES: string;
 }
 
 interface ImportMeta {

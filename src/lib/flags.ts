@@ -29,3 +29,9 @@ export function isInvitesEnabled(): boolean {
   if (!isLiveBattleEnabled()) return false;
   return import.meta.env.VITE_USE_INVITES !== "false";
 }
+
+/** JAMB / WAEC / custom exam papers. Default on when Supabase is configured. */
+export function isExamModesEnabled(): boolean {
+  if (!isSupabaseConfigured()) return false;
+  return import.meta.env.VITE_USE_EXAM_MODES !== "false";
+}

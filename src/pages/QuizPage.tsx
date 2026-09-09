@@ -5,6 +5,8 @@ import { subjects, type Subject, type Question } from "@/data/quizData";
 import { useGameStore } from "@/store/gameStore";
 import { Timer, CheckCircle2, XCircle, ArrowRight, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { fetchExamPaper, paperToQuestions, type ExamPaper } from "@/lib/exam-api";
+import { examPassed, examPercent, examXp, examLabel, formatPaperClock } from "@/lib/exam-score";
 import { loadPracticeQuestions } from "@/lib/practice-questions";
 import { enqueueOutbox } from "@/lib/practice-sync";
 import { isServerProfileEnabled } from "@/lib/flags";
@@ -15,13 +17,17 @@ const answerClasses = ["answer-a", "answer-b", "answer-c", "answer-d"];
 const answerLabels = ["A", "B", "C", "D"];
 
 const QuizPage = () => {
-  const { subjectId } = useParams<{ subjectId: string }>();
+  const { subjectId, testId } = useParams<{ subjectId?: string; testId?: string }>();
   const navigate = useNavigate();
+  const examMode = Boolean(testId);
   const { addXp, addCoins, completeQuiz, earnBadge } = useGameStore();
   const { data: session } = useSession();
   const sessionIdRef = useRef(crypto.randomUUID());
+  const finishedRef = useRef(false);
   const shouldSync = Boolean(session && isServerProfileEnabled());
 
+  const [paper, setPaper] = useState<ExamPaper | null>(null);
+  const [examError, setExamError] = useState<string | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -31,84 +37,99 @@ const QuizPage = () => {
   const [isFinished, setIsFinished] = useState(false);
   const [streak, setStreak] = useState(0);
   const [answers, setAnswers] = useState<boolean[]>([]);
+  const [chosen, setChosen] = useState<(number | null)[]>([]);
 
   const subject = subjects.find(s => s.id === subjectId);
+  const showHints = !examMode || Boolean(paper?.hints_allowed);
+  const paperSeconds = paper?.time_limit_s ?? 600;
 
-  useEffect(() => {
-    if (!subjectId) return;
+  const resetSession = useCallback((nextQuestions: Question[], seconds: number) => {
     sessionIdRef.current = crypto.randomUUID();
-    void loadPracticeQuestions(subjectId as Subject).then(setQuestions);
-  }, [subjectId]);
-
-  const handleAnswer = useCallback((index: number) => {
-    if (showFeedback) return;
-    setSelectedAnswer(index);
-    setShowFeedback(true);
-
-    const current = questions[currentIndex];
-    const isCorrect = index === current.correctIndex;
-    const xpGain = practiceXp(timeLeft, isCorrect);
-    if (isCorrect) {
-      setScore(s => s + xpGain);
-      setStreak(s => s + 1);
-      setAnswers(a => [...a, true]);
-    } else {
-      setStreak(0);
-      setAnswers(a => [...a, false]);
-    }
-
-    if (shouldSync) {
-      const attemptId = crypto.randomUUID();
-      void enqueueOutbox({
-        id: attemptId,
-        type: "attempt",
-        payload: {
-          id: attemptId,
-          question_id: current.id,
-          chosen_index: index,
-          time_left: timeLeft,
-        },
-      });
-    }
-  }, [showFeedback, currentIndex, questions, timeLeft, shouldSync]);
+    finishedRef.current = false;
+    setQuestions(nextQuestions);
+    setCurrentIndex(0);
+    setSelectedAnswer(null);
+    setShowFeedback(false);
+    setScore(0);
+    setTimeLeft(seconds);
+    setIsFinished(false);
+    setStreak(0);
+    setAnswers([]);
+    setChosen(nextQuestions.map(() => null));
+  }, []);
 
   useEffect(() => {
-    if (showFeedback || isFinished || questions.length === 0) return;
-    const timer = setTimeout(() => {
-      if (timeLeft <= 1) {
-        handleAnswer(-1);
-      } else {
-        setTimeLeft((t) => t - 1);
-      }
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [timeLeft, showFeedback, isFinished, questions.length, handleAnswer]);
-
-  const nextQuestion = () => {
-    if (currentIndex + 1 >= questions.length) {
-      finishQuiz();
-    } else {
-      setCurrentIndex(i => i + 1);
-      setSelectedAnswer(null);
-      setShowFeedback(false);
-      setTimeLeft(15);
+    if (testId) {
+      setExamError(null);
+      setPaper(null);
+      void fetchExamPaper(testId)
+        .then((row) => {
+          if (!row) {
+            setExamError("This paper is not on this device. Connect and sync, then try again.");
+            return;
+          }
+          const loaded = paperToQuestions(row);
+          if (loaded.length === 0) {
+            setExamError("This paper has no published questions yet.");
+            return;
+          }
+          setPaper(row);
+          resetSession(loaded, row.time_limit_s ?? 600);
+        })
+        .catch((err: unknown) => {
+          setExamError(err instanceof Error ? err.message : "Could not load this paper.");
+        });
+      return;
     }
-  };
+    if (!subjectId) return;
+    void loadPracticeQuestions(subjectId as Subject).then((rows) => resetSession(rows, 15));
+  }, [subjectId, testId, resetSession]);
 
-  const finishQuiz = () => {
+  const enqueueAttempt = useCallback((question: Question, index: number, timeLeftForXp: number) => {
+    if (!shouldSync) return;
+    const attemptId = crypto.randomUUID();
+    void enqueueOutbox({
+      id: attemptId,
+      type: "attempt",
+      payload: {
+        id: attemptId,
+        question_id: question.id,
+        chosen_index: index,
+        time_left: timeLeftForXp,
+        ...(testId ? { test_id: testId } : {}),
+      },
+    });
+  }, [shouldSync, testId]);
+
+  const finishQuiz = useCallback((finalChosen: (number | null)[], finalAnswers: boolean[]) => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
     setIsFinished(true);
-    const correct = answers.filter(Boolean).length;
+
+    const correct = examMode
+      ? questions.filter((q, i) => finalChosen[i] === q.correctIndex).length
+      : finalAnswers.filter(Boolean).length;
     const total = questions.length;
-    
-    addXp(score);
-    addCoins(Math.floor(score / 5));
+    const xpTotal = examMode
+      ? questions.reduce((sum, q, i) => sum + examXp(finalChosen[i] === q.correctIndex), 0)
+      : score;
+
+    if (examMode) {
+      setScore(xpTotal);
+      addXp(xpTotal);
+      addCoins(Math.floor(xpTotal / 5));
+    } else {
+      addXp(score);
+      addCoins(Math.floor(score / 5));
+    }
     completeQuiz(correct, total);
-    
-    if (correct === total) {
+
+    if (correct === total && total > 0) {
       earnBadge("genius");
-      if (subjectId === "math") earnBadge("math-whiz");
-      if (subjectId === "tech") earnBadge("tech-guru");
-      if (subjectId === "ai") earnBadge("ai-master");
+      const subjectForBadge = examMode ? questions[0]?.subject : subjectId;
+      if (subjectForBadge === "math") earnBadge("math-whiz");
+      if (subjectForBadge === "tech") earnBadge("tech-guru");
+      if (subjectForBadge === "ai") earnBadge("ai-master");
     }
     earnBadge("first-win");
 
@@ -118,34 +139,133 @@ const QuizPage = () => {
         type: "finish",
         payload: {
           id: sessionIdRef.current,
-          subject_id: subjectId,
+          subject_id: examMode ? (questions[0]?.subject ?? "general") : subjectId,
           correct,
           total,
         },
       });
     }
+  }, [addCoins, addXp, completeQuiz, earnBadge, examMode, questions, score, shouldSync, subjectId]);
+
+  const handleAnswer = useCallback((index: number) => {
+    if (showFeedback || selectedAnswer !== null) return;
+    const current = questions[currentIndex];
+    if (!current) return;
+    setSelectedAnswer(index);
+
+    const isCorrect = index === current.correctIndex;
+    if (examMode) {
+      setChosen((prev) => {
+        const next = [...prev];
+        next[currentIndex] = index;
+        return next;
+      });
+      enqueueAttempt(current, index, 0);
+      if (showHints) {
+        setShowFeedback(true);
+        setStreak((s) => (isCorrect ? s + 1 : 0));
+      }
+      return;
+    }
+
+    setShowFeedback(true);
+    const xpGain = practiceXp(timeLeft, isCorrect);
+    if (isCorrect) {
+      setScore((s) => s + xpGain);
+      setStreak((s) => s + 1);
+      setAnswers((a) => [...a, true]);
+    } else {
+      setStreak(0);
+      setAnswers((a) => [...a, false]);
+    }
+    enqueueAttempt(current, index, timeLeft);
+  }, [showFeedback, selectedAnswer, currentIndex, questions, timeLeft, shouldSync, examMode, showHints, enqueueAttempt]);
+
+  const finishFromTimeout = useCallback(() => {
+    const nextChosen = [...chosen];
+    questions.forEach((q, i) => {
+      if (nextChosen[i] == null) {
+        nextChosen[i] = -1;
+        enqueueAttempt(q, -1, 0);
+      }
+    });
+    setChosen(nextChosen);
+    finishQuiz(nextChosen, answers);
+  }, [answers, chosen, enqueueAttempt, finishQuiz, questions]);
+
+  useEffect(() => {
+    if (isFinished || questions.length === 0) return;
+    if (!examMode && showFeedback) return;
+    const timer = setTimeout(() => {
+      if (timeLeft <= 1) {
+        if (examMode) finishFromTimeout();
+        else handleAnswer(-1);
+      } else {
+        setTimeLeft((t) => t - 1);
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [timeLeft, showFeedback, isFinished, questions.length, handleAnswer, examMode, finishFromTimeout]);
+
+  const nextQuestion = () => {
+    if (currentIndex + 1 >= questions.length) {
+      if (examMode) {
+        const nextChosen = [...chosen];
+        if (selectedAnswer !== null) nextChosen[currentIndex] = selectedAnswer;
+        finishQuiz(nextChosen, answers);
+      } else {
+        finishQuiz(chosen, answers);
+      }
+    } else {
+      setCurrentIndex((i) => i + 1);
+      setSelectedAnswer(null);
+      setShowFeedback(false);
+      if (!examMode) setTimeLeft(15);
+    }
   };
 
-  if (!subject || questions.length === 0) {
+  if (examError) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-4 pt-24">
+        <div className="glass-card max-w-lg rounded-3xl p-10 text-center">
+          <p className="mb-6 text-xl font-black">{examError}</p>
+          <button
+            type="button"
+            onClick={() => navigate("/exams")}
+            className="rounded-2xl bg-primary px-8 py-3 font-black text-primary-foreground"
+          >
+            Back to exam papers
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if ((!examMode && !subject) || questions.length === 0) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background pt-24">
         <div className="text-center">
-          <motion.div 
+          <motion.div
             animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
             transition={{ repeat: Infinity, duration: 2 }}
             className="text-7xl mb-6"
           >
             🎮
           </motion.div>
-          <p className="text-2xl font-black text-muted-foreground">Loading quiz...</p>
+          <p className="text-2xl font-black text-muted-foreground">
+            {examMode ? "Loading paper..." : "Loading quiz..."}
+          </p>
         </div>
       </div>
     );
   }
 
   if (isFinished) {
-    const finalCorrect = answers.filter(Boolean).length;
-    const percentage = Math.round((finalCorrect / questions.length) * 100);
+    const finalCorrect = examMode
+      ? questions.filter((q, i) => chosen[i] === q.correctIndex).length
+      : answers.filter(Boolean).length;
+    const percentage = examPercent(finalCorrect, questions.length);
+    const passed = examMode ? examPassed(finalCorrect, questions.length, paper?.pass_mark_pct) : percentage >= 50;
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-4 pt-24 pb-16">
         <motion.div
@@ -160,13 +280,16 @@ const QuizPage = () => {
             transition={{ delay: 0.3, type: "spring", bounce: 0.6 }}
             className="text-8xl mb-6"
           >
-            {percentage >= 80 ? "🏆" : percentage >= 50 ? "⭐" : "💪"}
+            {examMode ? (passed ? "✅" : "📋") : percentage >= 80 ? "🏆" : percentage >= 50 ? "⭐" : "💪"}
           </motion.div>
           <h2 className="mb-3 text-4xl font-black">
-            {percentage >= 80 ? "Amazing!" : percentage >= 50 ? "Good Job!" : "Keep Trying!"}
+            {examMode
+              ? passed ? "You passed!" : "Below the pass mark"
+              : percentage >= 80 ? "Amazing!" : percentage >= 50 ? "Good Job!" : "Keep Trying!"}
           </h2>
           <p className="mb-10 text-xl font-bold text-muted-foreground">
             You scored {finalCorrect} out of {questions.length}
+            {examMode ? ` · Pass mark ${paper?.pass_mark_pct ?? 50}%` : ""}
           </p>
 
           <div className="mb-10 grid grid-cols-2 gap-6">
@@ -176,25 +299,42 @@ const QuizPage = () => {
             </div>
             <div className="rounded-3xl border border-game-orange/20 bg-game-orange/10 p-6">
               <p className="text-4xl font-black text-game-orange">{percentage}%</p>
-              <p className="mt-1 text-sm font-black text-game-orange/70">Accuracy</p>
+              <p className="mt-1 text-sm font-black text-game-orange/70">
+                {examMode ? (passed ? "Passed" : "Accuracy") : "Accuracy"}
+              </p>
             </div>
           </div>
+
+          {examMode && (
+            <div className="mb-8 max-h-64 space-y-3 overflow-y-auto text-left">
+              {questions.map((q, i) => {
+                const pick = chosen[i];
+                const ok = pick === q.correctIndex;
+                return (
+                  <div key={q.id} className="rounded-2xl border border-border bg-card/80 p-4">
+                    <p className="mb-1 text-sm font-black">
+                      {ok ? "✅" : "❌"} {i + 1}. {q.question}
+                    </p>
+                    <p className="flex items-start gap-2 text-sm font-bold text-muted-foreground">
+                      <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-game-orange" />
+                      {q.explanation}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           <div className="flex flex-col gap-4">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
-                setCurrentIndex(0);
-                setSelectedAnswer(null);
-                setShowFeedback(false);
-                setScore(0);
-                setTimeLeft(15);
-                setIsFinished(false);
-                setStreak(0);
-                setAnswers([]);
-                sessionIdRef.current = crypto.randomUUID();
-                void loadPracticeQuestions(subjectId as Subject).then(setQuestions);
+                if (examMode && paper) {
+                  resetSession(questions, paperSeconds);
+                  return;
+                }
+                void loadPracticeQuestions(subjectId as Subject).then((rows) => resetSession(rows, 15));
               }}
               className="rounded-2xl bg-primary px-8 py-4 text-lg font-black text-primary-foreground shadow-lg shadow-primary/20 transition-all"
             >
@@ -203,10 +343,10 @@ const QuizPage = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => navigate("/subjects")}
+              onClick={() => navigate(examMode ? "/exams" : "/subjects")}
               className="rounded-2xl bg-muted px-8 py-4 text-lg font-black text-muted-foreground transition-all hover:bg-muted/80"
             >
-              Try Another Subject
+              {examMode ? "More exam papers" : "Try Another Subject"}
             </motion.button>
           </div>
         </motion.div>
@@ -217,18 +357,25 @@ const QuizPage = () => {
   const question = questions[currentIndex];
   const isCorrect = selectedAnswer === question.correctIndex;
   const progress = ((currentIndex + 1) / questions.length) * 100;
+  const waitingForNext = examMode && !showHints && selectedAnswer !== null;
 
   return (
     <div className="min-h-screen bg-background px-4 pt-24 pb-8">
       <div className="mx-auto w-full max-w-[672px]">
-        {/* Header Info */}
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3 rounded-2xl bg-card px-4 py-2 shadow-game">
-            <span className="text-2xl">{subject.emoji}</span>
-            <span className="font-black">{subject.name}</span>
+            <span className="text-2xl">{examMode ? "📝" : subject?.emoji}</span>
+            <span className="font-black">
+              {examMode ? paper?.title ?? "Exam paper" : subject?.name}
+            </span>
           </div>
           <div className="flex items-center gap-6">
-            {streak >= 2 && (
+            {examMode && (
+              <span className="text-sm font-black tracking-widest text-primary uppercase">
+                {examLabel(paper?.exam_type_id ?? "custom")}
+              </span>
+            )}
+            {!examMode && streak >= 2 && (
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -237,11 +384,10 @@ const QuizPage = () => {
                 🔥 {streak} STREAK!
               </motion.span>
             )}
-            <span className="text-2xl font-black text-primary">{score} XP</span>
+            {!examMode && <span className="text-2xl font-black text-primary">{score} XP</span>}
           </div>
         </div>
 
-        {/* Progress & Timer Bar */}
         <div className="mb-10 flex items-center gap-4">
           <div className="h-4 flex-1 overflow-hidden rounded-full bg-muted shadow-inner">
             <motion.div
@@ -254,7 +400,7 @@ const QuizPage = () => {
           <div className="flex min-w-[100px] items-center justify-center gap-2 rounded-full bg-card px-6 py-2 shadow-game">
             <Timer className={cn("h-5 w-5", timeLeft <= 5 ? "animate-pulse text-destructive" : "text-primary")} />
             <span className={cn("text-xl font-black tabular-nums", timeLeft <= 5 ? "text-destructive" : "")}>
-              {timeLeft}s
+              {examMode ? formatPaperClock(timeLeft) : `${timeLeft}s`}
             </span>
           </div>
         </div>
@@ -263,7 +409,6 @@ const QuizPage = () => {
           Question {currentIndex + 1} of {questions.length}
         </p>
 
-        {/* Question Card */}
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -278,7 +423,6 @@ const QuizPage = () => {
               </h2>
             </div>
 
-            {/* Answers 2x2 Grid */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {question.options.map((option, i) => {
                 let stateClass = "";
@@ -286,22 +430,22 @@ const QuizPage = () => {
                 if (showFeedback) {
                   if (i === question.correctIndex) {
                     stateClass = "!bg-success !border-success !text-success-foreground";
-                  }
-                  else if (i === selectedAnswer && !isCorrect) {
+                  } else if (i === selectedAnswer && !isCorrect) {
                     stateClass = "!bg-destructive !border-destructive !text-destructive-foreground";
-                  }
-                  else {
+                  } else {
                     stateClass = "opacity-50";
                   }
+                } else if (waitingForNext && i === selectedAnswer) {
+                  stateClass = "ring-2 ring-primary";
                 }
 
                 return (
                   <motion.button
                     key={i}
-                    whileHover={!showFeedback ? { scale: 1.02, y: -2 } : {}}
-                    whileTap={!showFeedback ? { scale: 0.98 } : {}}
+                    whileHover={!showFeedback && selectedAnswer === null ? { scale: 1.02, y: -2 } : {}}
+                    whileTap={!showFeedback && selectedAnswer === null ? { scale: 0.98 } : {}}
                     onClick={() => handleAnswer(i)}
-                    disabled={showFeedback}
+                    disabled={showFeedback || selectedAnswer !== null}
                     className={cn(
                       "answer-option",
                       answerClasses[i],
@@ -317,7 +461,6 @@ const QuizPage = () => {
               })}
             </div>
 
-            {/* Feedback Notification */}
             <AnimatePresence>
               {showFeedback && (
                 <motion.div
@@ -362,6 +505,20 @@ const QuizPage = () => {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {waitingForNext && (
+              <motion.button
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={nextQuestion}
+                className="mt-10 flex w-full items-center justify-center gap-3 rounded-2xl bg-primary py-3 text-lg font-black text-primary-foreground shadow-lg shadow-primary/20 transition-all"
+              >
+                {currentIndex + 1 >= questions.length ? "Submit paper 🏆" : "Next Question"}
+                <ArrowRight className="w-8 h-8" />
+              </motion.button>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

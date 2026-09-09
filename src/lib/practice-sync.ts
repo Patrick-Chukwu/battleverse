@@ -1,5 +1,6 @@
+import { pullExamPacks } from "@/lib/exam-api";
 import { getSupabase } from "@/lib/supabase";
-import { isDexieQuestionsEnabled, isInvitesEnabled, isServerProfileEnabled } from "@/lib/flags";
+import { isDexieQuestionsEnabled, isExamModesEnabled, isInvitesEnabled, isServerProfileEnabled } from "@/lib/flags";
 import { offlineDb, type OutboxItem } from "@/lib/offline-db";
 import { cacheServerQuestions, seedBundledQuestions } from "@/lib/practice-questions";
 import type { AgeBand } from "@/lib/database.types";
@@ -80,5 +81,6 @@ export async function flushOutbox(): Promise<{ flushed: number; failed: number }
 
 export async function syncPractice(): Promise<void> {
   await pullPublishedQuestions();
+  if (isExamModesEnabled()) await pullExamPacks();
   await flushOutbox();
 }
