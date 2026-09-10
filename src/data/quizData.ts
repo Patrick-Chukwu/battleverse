@@ -9,7 +9,9 @@ export interface Question {
   ageGroup: "6-8" | "9-12" | "13-16" | "16plus";
 }
 
-export type Subject = "tech" | "ai" | "math" | "general";
+export type Subject = "tech" | "ai" | "math" | "general" | "bible" | "english";
+
+export const BATTLE_QUESTION_COUNT = 10;
 
 export interface SubjectInfo {
   id: Subject;
@@ -24,6 +26,8 @@ export const subjects: SubjectInfo[] = [
   { id: "ai", name: "AI & Future Tech", emoji: "🤖", color: "game-purple", description: "Artificial intelligence & the future" },
   { id: "math", name: "Mathematics", emoji: "➗", color: "game-orange", description: "Numbers, puzzles & logic" },
   { id: "general", name: "General Knowledge", emoji: "🌍", color: "game-green", description: "Science, facts & reasoning" },
+  { id: "bible", name: "Bible", emoji: "📖", color: "game-pink", description: "Scripture stories, people & verses" },
+  { id: "english", name: "English", emoji: "📚", color: "game-gold", description: "Grammar, vocabulary & language skills" },
 ];
 
 export const questions: Question[] = [

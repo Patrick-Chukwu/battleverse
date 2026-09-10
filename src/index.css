@@ -50,6 +50,7 @@
     --color-game-orange: var(--game-orange);
     --color-game-green: var(--game-green);
     --color-game-pink: var(--game-pink);
+    --color-game-gold: var(--game-gold);
 
     --radius-sm: 0.5rem;
     --radius-md: 0.75rem;
@@ -125,6 +126,7 @@
     --game-orange: #fa942e;
     --game-green: #22c380;
     --game-pink: #eb477e;
+    --game-gold: #d4a017;
 
     --nav-h: 56px;
     --bottom-nav-h: calc(4.25rem + env(safe-area-inset-bottom, 0px));
@@ -191,6 +193,7 @@ body[data-chrome="immersive"] {
     --game-orange: #fa942e;
     --game-green: #22c380;
     --game-pink: #eb477e;
+    --game-gold: #e8b931;
 }
 
 @layer base {

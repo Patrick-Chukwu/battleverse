@@ -1,0 +1,21 @@
+prompt,option_a,option_b,option_c,option_d,correct_index,explanation,subject,difficulty,age_band,exam_type,topic
+"What is the plural form of 'child'?",Childs,Children,Childes,Childrens,1,"The correct plural form of child is children.",english,easy,9-12,casual,plural-nouns
+"Which word is a noun in this sentence: 'The boy kicked the ball'?",Kicked,Boy,The,Kicked the,1,"Boy is a noun because it names a person.",english,easy,9-12,casual,nouns
+"Which word is a verb in this sentence: 'Sarah runs every morning'?",Sarah,Every,Morning,Runs,3,"Runs is the verb because it describes the action Sarah performs.",english,easy,9-12,casual,verbs
+"Which word is an adjective in this sentence: 'The beautiful bird sang'?",Bird,Sang,Beautiful,The,2,"Beautiful is an adjective because it describes the bird.",english,easy,9-12,casual,adjectives
+"Choose the correct word: 'She _____ to school every day.'",Go,Goes,Going,Gone,1,"Goes agrees with the singular subject she in the present tense.",english,easy,9-12,casual,subject-verb-agreement
+"Which sentence is correctly punctuated?","Where are you.","Where are you!","Where are you?","Where are you,",2,"A question mark is used at the end of a direct question.",english,easy,9-12,casual,punctuation
+"What is the opposite of 'ancient'?",Old,Modern,Historic,Early,1,"Modern is the opposite of ancient.",english,easy,9-12,casual,antonyms
+"What is a synonym for 'happy'?",Angry,Joyful,Tired,Afraid,1,"Joyful has a similar meaning to happy.",english,easy,9-12,casual,synonyms
+"Which word is spelled correctly?",Beautifull,Beutiful,Beautiful,Beautifal,2,"Beautiful is the correct spelling.",english,easy,9-12,casual,spelling
+"Which sentence is written in the past tense?",James plays football.,James is playing football.,James played football.,James will play football.,2,"Played shows that the action happened in the past.",english,easy,9-12,casual,tenses
+"Which word is a pronoun?",Table,Quickly,They,Beautiful,2,"They is a pronoun because it can be used in place of a noun.",english,easy,9-12,casual,pronouns
+"Choose the correct word: 'The dog wagged _____ tail.'",It's,Its,It is,Its',1,"Its is the possessive form used to show that the tail belongs to the dog.",english,medium,9-12,casual,possessives
+"Which sentence uses capital letters correctly?",my friend lives in lagos.,My friend lives in Lagos.,My Friend Lives In Lagos.,my Friend lives in Lagos.,1,"The first word of the sentence and the proper noun Lagos should begin with capital letters.",english,easy,9-12,casual,capitalization
+"What type of word is 'quickly' in the sentence 'The boy ran quickly'?",Noun,Adjective,Verb,Adverb,3,"Quickly is an adverb because it describes how the boy ran.",english,medium,9-12,casual,adverbs
+"Which word best completes the sentence: 'I was tired, _____ I finished my homework.'",Because,But,Or,If,1,"But correctly connects two ideas that contrast with each other.",english,medium,9-12,casual,conjunctions
+"What is the comparative form of 'tall'?",Tallest,Taller,More tall,Most tall,1,"Taller is the comparative form used when comparing two things.",english,easy,9-12,casual,comparatives
+"Which sentence is in the future tense?",We visited the museum.,We visit the museum.,We are visiting the museum.,We will visit the museum.,3,"Will visit describes an action that will happen in the future.",english,easy,9-12,casual,tenses
+"Which word does NOT belong with the others?",Apple,Banana,Carrot,Orange,2,"Carrot is a vegetable, while apple, banana, and orange are fruits.",english,easy,9-12,casual,vocabulary
+"Choose the correct sentence.",The boys is playing.,The boys are playing.,The boys am playing.,The boys be playing.,1,"Are agrees with the plural subject boys.",english,easy,9-12,casual,subject-verb-agreement
+"What does the word 'generous' mean?",Willing to give or share,Unwilling to help,Always feeling angry,Unable to speak,"0","Generous describes someone who is willing to give or share with others.",english,medium,9-12,casual,vocabulary

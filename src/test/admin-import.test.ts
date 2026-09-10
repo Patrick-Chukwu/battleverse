@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import sampleCsv from "../../docs/admin-import-sample.csv?raw";
+import bibleCsv from "../../docs/bible-questions.csv?raw";
+import englishCsv from "../../docs/english-questions.csv?raw";
 import { rpcErrorMessage } from "@/lib/admin-api";
 import {
   itemQualityFlag,
@@ -89,6 +91,18 @@ describe("parseImportText", () => {
     expect(parsed.rows).toHaveLength(20);
     expect(parsed.rows.every((row) => row.correct_index >= 0 && row.correct_index <= 3)).toBe(true);
     expect(parsed.rows.some((row) => row.id)).toBe(false);
+  });
+
+  it("accepts bible and english subject rows from the subject CSVs", () => {
+    const bible = parseImportText(bibleCsv);
+    expect(bible.errors).toEqual([]);
+    expect(bible.rows.length).toBeGreaterThan(0);
+    expect(bible.rows.every((row) => row.subject === "bible")).toBe(true);
+
+    const english = parseImportText(englishCsv);
+    expect(english.errors).toEqual([]);
+    expect(english.rows.length).toBeGreaterThan(0);
+    expect(english.rows.every((row) => row.subject === "english")).toBe(true);
   });
 });
 

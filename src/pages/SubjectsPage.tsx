@@ -12,6 +12,8 @@ const subjectHover: Record<string, string> = {
   "game-purple": "hover:border-game-purple/30",
   "game-orange": "hover:border-game-orange/30",
   "game-green": "hover:border-game-green/30",
+  "game-pink": "hover:border-game-pink/30",
+  "game-gold": "hover:border-game-gold/30",
 };
 
 const SubjectsPage = () => {

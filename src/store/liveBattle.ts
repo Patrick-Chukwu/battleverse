@@ -1,5 +1,5 @@
 import type { RealtimeChannel } from "@supabase/supabase-js";
-import { questions as bundled, shuffleArray, type Question, type Subject } from "@/data/quizData";
+import { BATTLE_QUESTION_COUNT, questions as bundled, shuffleArray, type Question, type Subject } from "@/data/quizData";
 import { avatars } from "@/data/gameData";
 import { isLiveBattleEnabled } from "@/lib/flags";
 import { getSupabase } from "@/lib/supabase";
@@ -448,7 +448,7 @@ export function createBattleActions(
     botTimer = window.setTimeout(() => {
       const filtered = bundled.filter((q: Question) => q.subject === subject && q.ageGroup === ageGroup);
       const pool = filtered.length >= 1 ? filtered : bundled.filter((q) => q.subject === subject);
-      const selectedQuestions = shuffleArray(pool).slice(0, 5);
+      const selectedQuestions = shuffleArray(pool).slice(0, BATTLE_QUESTION_COUNT);
       const randomRivals: Rival[] = shuffleArray(RIVAL_NAMES)
         .slice(0, 2)
         .map((name: string) => ({

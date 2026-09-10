@@ -13,6 +13,8 @@ const subjectHover: Record<string, string> = {
   "game-purple": "hover:border-game-purple/30",
   "game-orange": "hover:border-game-orange/30",
   "game-green": "hover:border-game-green/30",
+  "game-pink": "hover:border-game-pink/30",
+  "game-gold": "hover:border-game-gold/30",
 };
 
 const HomePage = () => {
@@ -140,7 +142,7 @@ const HomePage = () => {
           <p className="text-base font-bold text-muted-foreground sm:text-lg">Pick a subject and start your quest</p>
         </motion.div>
 
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {subjects.map((subject, i) => (
             <motion.button
               key={subject.id}
