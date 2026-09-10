@@ -38,6 +38,7 @@ const QuizPage = () => {
   const [streak, setStreak] = useState(0);
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [chosen, setChosen] = useState<(number | null)[]>([]);
+  const [packLoaded, setPackLoaded] = useState(false);
 
   const subject = subjects.find(s => s.id === subjectId);
   const showHints = !examMode || Boolean(paper?.hints_allowed);
@@ -82,7 +83,11 @@ const QuizPage = () => {
       return;
     }
     if (!subjectId) return;
-    void loadPracticeQuestions(subjectId as Subject).then((rows) => resetSession(rows, 15));
+    setPackLoaded(false);
+    void loadPracticeQuestions(subjectId as Subject).then((rows) => {
+      resetSession(rows, 15);
+      setPackLoaded(true);
+    });
   }, [subjectId, testId, resetSession]);
 
   const enqueueAttempt = useCallback((question: Question, index: number, timeLeftForXp: number) => {
@@ -235,6 +240,27 @@ const QuizPage = () => {
             className="rounded-2xl bg-primary px-8 py-3 font-black text-primary-foreground"
           >
             Back to exam papers
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!examMode && packLoaded && questions.length === 0) {
+    return (
+      <div className="page-shell flex items-center justify-center bg-background">
+        <div className="glass-card max-w-lg rounded-3xl p-6 text-center sm:p-10">
+          <p className="mb-2 text-5xl">{subject?.emoji ?? "📚"}</p>
+          <p className="mb-3 text-2xl font-black">{subject?.name ?? "This subject"}</p>
+          <p className="mb-6 font-bold text-muted-foreground">
+            No questions are ready yet. Import and publish some, then try again.
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate("/subjects")}
+            className="rounded-2xl bg-primary px-8 py-3 font-black text-primary-foreground"
+          >
+            Back to subjects
           </button>
         </div>
       </div>

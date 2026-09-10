@@ -1,0 +1,41 @@
+prompt,option_a,option_b,option_c,option_d,correct_index,explanation,subject,difficulty,age_band,exam_type,topic
+"Who created the heavens and the earth?",Moses,God,Abraham,David,1,"Genesis 1:1 teaches that God created the heavens and the earth.",bible,easy,6-8,casual,creation
+"Who was the first man God created?",Noah,Adam,Abraham,Isaac,1,"Adam was the first man created by God.",bible,easy,6-8,casual,creation
+"Who was the first woman?",Sarah,Eve,Ruth,Mary,1,"Eve was the first woman and was created by God for Adam.",bible,easy,6-8,casual,creation
+"How many days did God take to create the world before resting?",5,6,7,8,1,"God created the world in six days and rested on the seventh day.",bible,easy,6-8,casual,creation
+"Who built the ark?",Abraham,David,Noah,Moses,2,"Noah built the ark according to God's instructions.",bible,easy,6-8,casual,noah
+"What sign did God give after the flood as a promise?",A star,A rainbow,A cloud,A mountain,1,"God placed a rainbow in the clouds as a sign of His covenant with Noah.",bible,easy,6-8,casual,noah
+"Who was swallowed by a great fish?",Jonah,Peter,Paul,Joseph,0,"Jonah was swallowed by a great fish after fleeing from God's instruction.",bible,easy,6-8,casual,jonah
+"Who led the Israelites out of Egypt?",Joshua,Moses,Samuel,David,1,"Moses led the Israelites out of slavery in Egypt.",bible,easy,6-8,casual,moses
+"What did Moses receive from God on Mount Sinai?",The Ten Commandments,A crown,A sword,A golden cup,0,"God gave Moses the Ten Commandments on Mount Sinai.",bible,easy,6-8,casual,ten-commandments
+"What sea did God part for the Israelites to cross?",Dead Sea,Red Sea,Mediterranean Sea,Galilee Sea,1,"God parted the Red Sea so the Israelites could cross on dry ground.",bible,easy,6-8,casual,exodus
+"Who was the strongest man mentioned in the Bible?",Samson,Solomon,Saul,Daniel,0,"Samson was famous for his extraordinary strength, which was connected to his Nazirite vow.",bible,easy,6-8,casual,samson
+"Who defeated Goliath?",Saul,David,Jonathan,Samuel,1,"David defeated the giant Goliath with a sling and a stone.",bible,easy,6-8,casual,david
+"What did David use to defeat Goliath?",A sword,A spear,A sling and a stone,A bow and arrow,2,"David used a sling and a stone to defeat Goliath.",bible,easy,6-8,casual,david-and-goliath
+"Who was known for his great wisdom?",David,Solomon,Samson,Joshua,1,"King Solomon was famous for the great wisdom God gave him.",bible,easy,6-8,casual,solomon
+"Who was thrown into the lions' den?",Daniel,Joseph,Elijah,Jeremiah,0,"Daniel was thrown into a lions' den because he continued praying to God.",bible,easy,6-8,casual,daniel
+"Who were the three men thrown into the fiery furnace?",Peter,James and John,Shadrach Meshach and Abednego,Paul Silas and Barnabas,2,"Shadrach, Meshach, and Abednego were thrown into the fiery furnace for refusing to worship an idol.",bible,easy,6-8,casual,fiery-furnace
+"Where was Jesus born?",Nazareth,Bethlehem,Jerusalem,Capernaum,1,"Jesus was born in Bethlehem of Judea.",bible,easy,6-8,casual,jesus-birth
+"Who was the mother of Jesus?",Martha,Mary,Elizabeth,Ruth,1,"Mary was the mother of Jesus.",bible,easy,6-8,casual,mary
+"Who baptized Jesus?",Peter,John the Baptist,James,Andrew,1,"John the Baptist baptized Jesus in the Jordan River.",bible,easy,6-8,casual,baptism
+"How many disciples did Jesus choose?",10,11,12,13,2,"Jesus chose twelve disciples to follow Him and help spread His message.",bible,easy,6-8,casual,disciples
+"What was Jesus' first miracle?",Healing a blind man,Walking on water,Turning water into wine,Feeding five thousand,2,"Jesus performed His first recorded miracle at Cana by turning water into wine.",bible,easy,6-8,casual,miracles
+"How many loaves of bread were used when Jesus fed the five thousand?",3,5,7,12,1,"Jesus fed the five thousand using five loaves and two fish.",bible,easy,6-8,casual,miracles
+"How many fish were used to feed the five thousand?",1,2,5,7,1,"The five thousand were fed with five loaves and two fish.",bible,easy,6-8,casual,miracles
+"Who betrayed Jesus?",Peter,Judas Iscariot,Thomas,Matthew,1,"Judas Iscariot betrayed Jesus and handed Him over to the authorities.",bible,easy,6-8,casual,jesus
+"Who denied knowing Jesus three times?",John,Peter,James,Andrew,1,"Peter denied knowing Jesus three times before the rooster crowed.",bible,easy,6-8,casual,peter
+"On what day did Jesus rise from the dead?",The first day of the week,The second day of the week,The fifth day of the week,The seventh day of the week,0,"Jesus rose from the dead on the first day of the week.",bible,easy,6-8,casual,resurrection
+"Which book comes first in the Bible?",Exodus,Matthew,Genesis,Psalms,2,"Genesis is the first book of the Bible.",bible,easy,6-8,casual,bible-books
+"Which book comes last in the Bible?",Jude,Revelation,Acts,Malachi,1,"Revelation is the final book of the Bible.",bible,easy,6-8,casual,bible-books
+"Who was the father of Isaac?",Jacob,Abraham,Moses,Joseph,1,"Abraham was the father of Isaac.",bible,easy,6-8,casual,abraham
+"Who was Isaac's son who was later called Israel?",Esau,Jacob,Joseph,Samuel,1,"Jacob was later given the name Israel.",bible,easy,6-8,casual,jacob
+"Who was Joseph's father?",Isaac,Jacob,Abraham,Moses,1,"Jacob was the father of Joseph.",bible,easy,9-12,casual,joseph
+"How many brothers did Joseph have?",10,11,12,13,1,"Joseph had eleven brothers, making twelve sons of Jacob in total.",bible,medium,9-12,casual,joseph
+"Who interpreted Pharaoh's dreams in Egypt?",Joseph,Moses,Daniel,Samuel,0,"Joseph interpreted Pharaoh's dreams and advised him about the coming years of plenty and famine.",bible,medium,9-12,casual,joseph
+"Who was the first king of Israel?",David,Saul,Solomon,Samuel,1,"Saul was the first king of Israel.",bible,medium,9-12,casual,kings
+"Who became king of Israel after Saul?",Solomon,David,Joshua,Samuel,1,"David became king after Saul.",bible,easy,9-12,casual,david
+"Which disciple walked on water toward Jesus?",John,Peter,Thomas,Matthew,1,"Peter stepped out of the boat and walked on water toward Jesus.",bible,easy,9-12,casual,peter
+"Which disciple was known for doubting Jesus' resurrection until he saw evidence?",Thomas,Andrew,Philip,Bartholomew,0,"Thomas initially doubted the resurrection until he encountered the risen Jesus.",bible,easy,9-12,casual,disciples
+"Who wrote many of the letters in the New Testament?",Paul,Peter,James,John,0,"Paul is traditionally recognized as the author of many New Testament letters.",bible,medium,9-12,casual,paul
+"Which apostle was a tax collector before following Jesus?",Matthew,Peter,John,James,0,"Matthew was a tax collector before becoming one of Jesus' disciples.",bible,easy,9-12,casual,disciples
+"What is the shortest verse in the Bible?",God is love,Jesus wept,Pray without ceasing,Rejoice always,1,"John 11:35 contains the well-known short verse, 'Jesus wept.'",bible,medium,9-12,casual,bible-verses

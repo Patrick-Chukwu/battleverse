@@ -13,7 +13,9 @@ INSERT INTO public.subjects (id, name, emoji, color, description) VALUES
   ('tech', 'Tech & Coding', '💻', 'game-blue', 'Computers, internet & coding basics'),
   ('ai', 'AI & Future Tech', '🤖', 'game-purple', 'Artificial intelligence & the future'),
   ('math', 'Mathematics', '➗', 'game-orange', 'Numbers, puzzles & logic'),
-  ('general', 'General Knowledge', '🌍', 'game-green', 'Science, facts & reasoning')
+  ('general', 'General Knowledge', '🌍', 'game-green', 'Science, facts & reasoning'),
+  ('bible', 'Bible', '📖', 'game-pink', 'Scripture stories, people & verses'),
+  ('english', 'English', '📚', 'game-gold', 'Grammar, vocabulary & language skills')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public.badges (id, name, emoji, description, requirement) VALUES
@@ -21,7 +23,7 @@ INSERT INTO public.badges (id, name, emoji, description, requirement) VALUES
   ('speed-demon', 'Speed Demon', '⚡', 'Answer 5 questions in under 3 seconds each', '5 fast answers'),
   ('genius', 'Genius', '🧠', 'Get a perfect score on any quiz', '100% score'),
   ('streak-king', 'Streak King', '🔥', 'Get a 5-answer streak', '5 correct in a row'),
-  ('explorer', 'Explorer', '🧭', 'Try all 4 subjects', 'Play all subjects'),
+  ('explorer', 'Explorer', '🧭', 'Try all 6 subjects', 'Play all subjects'),
   ('math-whiz', 'Math Whiz', '🔢', 'Score 100% on a math quiz', 'Perfect math score'),
   ('tech-guru', 'Tech Guru', '💻', 'Score 100% on a tech quiz', 'Perfect tech score'),
   ('ai-master', 'AI Master', '🤖', 'Score 100% on an AI quiz', 'Perfect AI score')

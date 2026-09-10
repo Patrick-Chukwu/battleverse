@@ -1,4 +1,4 @@
-export const ADMIN_SUBJECTS = ["tech", "ai", "math", "general"] as const;
+export const ADMIN_SUBJECTS = ["tech", "ai", "math", "general", "bible", "english"] as const;
 export const ADMIN_DIFFICULTIES = ["easy", "medium", "hard"] as const;
 export const ADMIN_AGE_BANDS = ["6-8", "9-12", "13-16", "16plus"] as const;
 export const ADMIN_EXAM_TYPES = ["casual", "jamb", "waec", "custom"] as const;

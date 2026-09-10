@@ -209,8 +209,8 @@ const BattlePage = () => {
                 <div className="h-8 w-1.5 rounded-full bg-game-blue shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
                 <h2 className="text-xl font-black tracking-tight sm:text-2xl">Choose Subject</h2>
               </div>
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-6 md:gap-4">
-                {subjects.map((s, idx) => (
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+                {subjects.map((s) => (
                   <motion.button
                     key={s.id}
                     whileHover={{ scale: 1.02, y: -4 }}
@@ -218,7 +218,6 @@ const BattlePage = () => {
                     onClick={() => setSelectedSubject(s.id)}
                     className={cn(
                       "glass-card relative group overflow-hidden rounded-3xl border-2 p-4 transition-all sm:p-6",
-                      idx === 0 || idx === 3 ? "col-span-1 md:col-span-4" : "col-span-1 md:col-span-2",
                       selectedSubject === s.id
                         ? "border-primary shadow-game"
                         : "border-transparent hover:border-primary/20"
@@ -229,7 +228,15 @@ const BattlePage = () => {
                       <div className="min-w-0 text-left">
                         <span className="mb-1 block truncate text-base font-black leading-none sm:text-xl">{s.name}</span>
                         <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-60">
-                          {s.id === "ai" ? "FutureTech" : s.id === "tech" ? "Digital" : "Fundamentals"}
+                          {s.id === "ai"
+                            ? "FutureTech"
+                            : s.id === "tech"
+                              ? "Digital"
+                              : s.id === "bible"
+                                ? "Scripture"
+                                : s.id === "english"
+                                  ? "Language"
+                                  : "Fundamentals"}
                         </span>
                       </div>
                     </div>

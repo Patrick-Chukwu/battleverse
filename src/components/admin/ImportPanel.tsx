@@ -65,7 +65,8 @@ export function ImportPanel() {
     <div className="space-y-4">
       <p className="font-bold text-muted-foreground">
         CSV or JSON. Columns: prompt, option_a–d, correct_index, explanation, subject, difficulty,
-        age_band, exam_type, topic. Invalid rows are reported and nothing is committed.
+        age_band, exam_type, topic. Subjects: tech, ai, math, general, bible, english. Invalid rows
+        are reported and nothing is committed.
       </p>
       <input
         type="file"

@@ -11,7 +11,7 @@ export const badges: Badge[] = [
   { id: "speed-demon", name: "Speed Demon", emoji: "⚡", description: "Answer 5 questions in under 3 seconds each", requirement: "5 fast answers" },
   { id: "genius", name: "Genius", emoji: "🧠", description: "Get a perfect score on any quiz", requirement: "100% score" },
   { id: "streak-king", name: "Streak King", emoji: "🔥", description: "Get a 5-answer streak", requirement: "5 correct in a row" },
-  { id: "explorer", name: "Explorer", emoji: "🧭", description: "Try all 4 subjects", requirement: "Play all subjects" },
+  { id: "explorer", name: "Explorer", emoji: "🧭", description: "Try all 6 subjects", requirement: "Play all subjects" },
   { id: "math-whiz", name: "Math Whiz", emoji: "🔢", description: "Score 100% on a math quiz", requirement: "Perfect math score" },
   { id: "tech-guru", name: "Tech Guru", emoji: "💻", description: "Score 100% on a tech quiz", requirement: "Perfect tech score" },
   { id: "ai-master", name: "AI Master", emoji: "🤖", description: "Score 100% on an AI quiz", requirement: "Perfect AI score" },
